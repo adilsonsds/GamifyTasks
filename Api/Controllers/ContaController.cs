@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Domain.Entities;
-using Infra;
+using Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -12,25 +8,26 @@ namespace Api.Controllers
     [ApiController]
     public class ContaController : ControllerBase
     {
+        private readonly IContaRepository ContaRepository;
 
-        readonly GamifyTasksContext Context;
-
-        public ContaController(GamifyTasksContext context)
+        public ContaController(IContaRepository contaRepository)
         {
-            this.Context = context;
+            this.ContaRepository = contaRepository;
         }
+
         // // GET api/values
-        // [HttpGet]
-        // public ActionResult<IEnumerable<string>> Get()
-        // {
-        //     return new string[] { "value1", "value2" };
-        // }
+        [HttpGet("{id}")]
+        public ActionResult Get(int id)
+        {
+            var conta = ContaRepository.GetById(id);
+            return Ok(conta);
+        }
 
         // GET api/values/5
         [HttpGet]
         public ActionResult Get()
         {
-            var contas = Context.Contas.ToList();
+            var contas = ContaRepository.Get();
             return Ok(contas);
         }
 
@@ -40,26 +37,35 @@ namespace Api.Controllers
         {
             var conta = new Conta
             {
-                Email = "adilson@dev.com",
+                Email = "adilson@dev1.com",
                 Senha = "123456"
             };
 
-            Context.Add(conta);
-            Context.SaveChanges();
+            ContaRepository.Add(conta);
+            ContaRepository.Save();
 
             return Ok("Conta criada com sucesso.");
         }
 
-        // // PUT api/values/5
-        // [HttpPut("{id}")]
-        // public void Put(int id, [FromBody] string value)
-        // {
-        // }
+        // PUT api/values/5
+        [HttpPut("{id}")]
+        public ActionResult Put(int id)//, [FromBody] string value)
+        {
+            var conta = ContaRepository.GetById(id);
+            conta.Email = "adilson@dev2.com";
 
-        // // DELETE api/values/5
-        // [HttpDelete("{id}")]
-        // public void Delete(int id)
-        // {
-        // }
+            ContaRepository.Update(conta);
+            ContaRepository.Save();
+
+            return Ok("Conta atualizada com sucesso.");
+        }
+
+        // DELETE api/values/5
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            ContaRepository.Remove(id);
+            return Ok("Conta removida com sucesso");
+        }
     }
 }

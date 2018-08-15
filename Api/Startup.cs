@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Infra;
+using Domain.Repositories;
+using Infra.Repositories;
 
 namespace Api
 {
@@ -28,6 +30,9 @@ namespace Api
                     Configuration.GetConnectionString("DefaultConnectionString")
                 )
             );
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IContaRepository, ContaRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
