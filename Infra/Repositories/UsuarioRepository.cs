@@ -3,9 +3,9 @@ using Domain.Repositories;
 
 namespace Infra.Repositories
 {
-    public class ContaRepository : Repository<Conta>, IContaRepository
+    public class UsuarioRepository : Repository<Usuario>, IUsuarioRepository
     {
-        public ContaRepository(GamifyTasksContext context)
+        public UsuarioRepository(GamifyTasksContext context)
             : base(context)
         {
             

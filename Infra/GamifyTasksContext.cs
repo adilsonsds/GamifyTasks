@@ -15,7 +15,7 @@ namespace Infra
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new ContaConfiguration());
+            modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
             // modelBuilder.ApplyConfiguration(new PessoaConfiguration());
 
         }
