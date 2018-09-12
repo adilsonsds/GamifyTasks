@@ -25,6 +25,8 @@ namespace Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddCors();
+
             services.AddDbContext<GamifyTasksContext>(
                 options => options.UseNpgsql(
                     Configuration.GetConnectionString("DefaultConnectionString")
@@ -46,6 +48,13 @@ namespace Api
             {
                 app.UseHsts();
             }
+
+            app.UseCors(builder => 
+                builder
+                    .WithOrigins("http://localhost:8080")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials());
 
             app.UseHttpsRedirection();
             app.UseMvc();
