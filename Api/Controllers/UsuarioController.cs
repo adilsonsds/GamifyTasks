@@ -1,3 +1,5 @@
+using System;
+using Api.Models;
 using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +17,6 @@ namespace Api.Controllers
             this.UsuarioRepository = usuarioRepository;
         }
 
-        // // GET api/values
         [HttpGet("{id}")]
         public ActionResult Get(int id)
         {
@@ -23,7 +24,6 @@ namespace Api.Controllers
             return Ok(usuario);
         }
 
-        // GET api/values/5
         [HttpGet]
         public ActionResult Get()
         {
@@ -31,37 +31,51 @@ namespace Api.Controllers
             return Ok(usuarios);
         }
 
-        // POST api/values
         [HttpPost]
-        public ActionResult Post([FromBody]string nome, string sobrenome, string email, string senha)
+        public IActionResult Post([FromBody]UsuarioModel usuarioModel)
         {
             var usuario = new Usuario
             {
-                NomeCompleto = $"{nome} {sobrenome}",
-                Email = email,
-                Senha = senha
+                NomeCompleto = $"{usuarioModel.Nome} {usuarioModel.Sobrenome}",
+                Email = usuarioModel.Email,
+                Senha = usuarioModel.Senha
             };
 
-            UsuarioRepository.Add(usuario);
-            UsuarioRepository.Save();
+            try
+            {
+                UsuarioRepository.Add(usuario);
+                UsuarioRepository.Save();
+                return Ok(usuario.Id);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Erro ao criar usuário.");
+            }
 
-            return Ok("Usuario criado com sucesso.");
         }
 
-        // PUT api/values/5
         [HttpPut("{id}")]
-        public ActionResult Put(int id)//, [FromBody] string value)
+        public ActionResult<Usuario> Put([FromBody]UsuarioModel usuarioModel)
         {
-            var usuario = UsuarioRepository.GetById(id);
-            usuario.Email = "adilson@dev2.com";
+            try
+            {
+                var usuario = UsuarioRepository.GetById(usuarioModel.Id);
 
-            UsuarioRepository.Update(usuario);
-            UsuarioRepository.Save();
+                usuario.NomeCompleto = $"{usuarioModel.Nome} {usuarioModel.Sobrenome}";
+                usuario.Email = usuarioModel.Email;
+                usuario.Senha = usuarioModel.Senha;
 
-            return Ok("Usuario atualizado com sucesso.");
+                UsuarioRepository.Update(usuario);
+                UsuarioRepository.Save();
+
+                return Ok("Usuario atualizado com sucesso.");
+            }
+            catch (Exception)
+            {
+                return BadRequest("Não foi possível salvar os dados.");
+            }
         }
 
-        // DELETE api/values/5
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {

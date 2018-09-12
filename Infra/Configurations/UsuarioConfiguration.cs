@@ -10,7 +10,10 @@ namespace Infra.Configurations
         {
             builder.ToTable("usuario");
 
-            builder.HasKey(p => p.Id).HasName("id_usuario");
+            builder.HasKey(p => p.Id);
+
+            builder.Property(p => p.Id)
+                .HasColumnName("id_usuario");
 
             builder.Property(p => p.NomeCompleto)
                 .HasColumnName("nome_completo")
