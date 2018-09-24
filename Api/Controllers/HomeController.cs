@@ -2,8 +2,7 @@
 
 namespace Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/")]
     public class HomeController : ControllerBase
     {
         [HttpGet]

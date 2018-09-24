@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers
 {
     [Route("api/usuario")]
-    [ApiController]
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioRepository UsuarioRepository;
@@ -27,7 +26,7 @@ namespace Api.Controllers
         [HttpGet]
         public ActionResult Get()
         {
-            var usuarios = UsuarioRepository.Get();
+            var usuarios = UsuarioRepository.GetAll();
             return Ok(usuarios);
         }
 
@@ -44,7 +43,7 @@ namespace Api.Controllers
             try
             {
                 UsuarioRepository.Add(usuario);
-                UsuarioRepository.Save();
+                // UsuarioRepository.Save();
                 return Ok(usuario.Id);
             }
             catch (Exception)
@@ -66,7 +65,7 @@ namespace Api.Controllers
                 usuario.Senha = usuarioModel.Senha;
 
                 UsuarioRepository.Update(usuario);
-                UsuarioRepository.Save();
+                // UsuarioRepository.Save();
 
                 return Ok("Usuario atualizado com sucesso.");
             }

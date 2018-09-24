@@ -34,7 +34,19 @@ namespace Api
             );
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IAlunoDoCaseRepository, AlunoDoCaseRepository>();
+            services.AddScoped<ICaseRepository, CaseRepository>();
+            services.AddScoped<IEntregaDeLicaoRepository, EntregaDeLicaoRepository>();
+            services.AddScoped<IEntregaDeTrofeuRepository, EntregaDeTrofeuRepository>();
+            services.AddScoped<IGrupoRepository, GrupoRepository>();
+            services.AddScoped<ILicaoRepository, LicaoRepository>();
+            services.AddScoped<IMembroDoGrupoRepository, MembroDoGrupoRepository>();
+            services.AddScoped<IQuestaoRepository, QuestaoRepository>();
+            services.AddScoped<IResponsavelPelaLicaoRepository, ResponsavelPelaLicaoRepository>();
+            services.AddScoped<IRespostaRepository, RespostaRepository>();
+            services.AddScoped<ITrofeuRepository, TrofeuRepository>();
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

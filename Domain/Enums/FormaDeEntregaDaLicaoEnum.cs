@@ -2,8 +2,8 @@ namespace Domain.Enums
 {
     public enum FormaDeEntregaDaLicaoEnum
     {
-        SomenteIndividual = 1,
+        SomenteIndividual = 0,
+        IndividualOuEmGrupo = 1,
         SomenteEmGrupo = 2,
-        IndividualOuEmGrupo = 3
     }
 }

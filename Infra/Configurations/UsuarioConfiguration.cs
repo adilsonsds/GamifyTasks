@@ -8,30 +8,30 @@ namespace Infra.Configurations
     {
         public void Configure(EntityTypeBuilder<Usuario> builder)
         {
-            builder.ToTable("Usuario");
+            builder.ToTable("usuario");
 
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.Id)
-                .HasColumnName("Id");
+                .HasColumnName("id_usuario");
 
             builder.Property(p => p.NomeCompleto)
-                .HasColumnName("NomeCompleto")
+                .HasColumnName("nome_completo")
                 .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(p => p.Email)
-                .HasColumnName("Email")
+                .HasColumnName("email")
                 .HasMaxLength(100)
                 .IsRequired();
 
             builder.Property(p => p.Senha)
-                .HasColumnName("Senha")
+                .HasColumnName("senha")
                 .HasMaxLength(50)
                 .IsRequired();
 
             builder.Property(p => p.DataHoraCadastro)
-                .HasColumnName("DataHoraCadastro")
+                .HasColumnName("data_hora_cadastro")
                 .HasColumnType("TIMESTAMP(0)")
                 .IsRequired();
         }
