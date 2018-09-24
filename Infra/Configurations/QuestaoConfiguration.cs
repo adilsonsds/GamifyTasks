@@ -4,21 +4,22 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infra.Configurations
 {
-    public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
+    public class QuestaoConfiguration : IEntityTypeConfiguration<Questao>
     {
-        public void Configure(EntityTypeBuilder<Usuario> builder)
+        public void Configure(EntityTypeBuilder<Questao> builder)
         {
-            builder.ToTable("Usuario");
+            builder.ToTable("Questao");
 
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.Id)
                 .HasColumnName("Id");
 
+            builder.Property(p => p.Licao)
+                .HasColumnName("IdLicao");
+
             builder.Property(p => p.NomeCompleto)
-                .HasColumnName("NomeCompleto")
-                .HasMaxLength(100)
-                .IsRequired();
+                .HasColumnName("IdCase");
 
             builder.Property(p => p.Email)
                 .HasColumnName("Email")
