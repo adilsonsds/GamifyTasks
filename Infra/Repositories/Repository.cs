@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Repositories;
@@ -13,14 +14,14 @@ namespace Infra.Repositories
             Context = context;
         }
 
-        public void Add(T entity)
+        public IQueryable<T> Queryable()
         {
-            Context.Set<T>().Add(entity);
+            return Context.Set<T>().AsQueryable<T>();
         }
 
-        public IEnumerable<T> Get()
+        public IQueryable<T> Where(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
         {
-            return Context.Set<T>().ToList();
+            return Queryable().Where(predicate);
         }
 
         public T GetById(int id)
@@ -28,20 +29,33 @@ namespace Infra.Repositories
             return Context.Set<T>().Find(id);
         }
 
-        public void Remove(int id)
+        public IEnumerable<T> GetAll()
         {
-            var type = GetById(id);
-            Context.Set<T>().Remove(type);
+            return Context.Set<T>().ToList();
         }
 
-        public void Save()
+        public void Add(T entity)
         {
-            Context.SaveChanges();
+            Context.Set<T>().Add(entity);
+            Save();
         }
 
         public void Update(T entity)
         {
             Context.Set<T>().Update(entity);
+            Save();            
+        }
+
+        public void Remove(int id)
+        {
+            var type = GetById(id);
+            Context.Set<T>().Remove(type);
+            Save();
+        }
+
+        private void Save()
+        {
+            Context.SaveChanges();
         }
     }
 }

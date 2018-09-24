@@ -1,20 +1,25 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Domain.Repositories
 {
     public interface IRepository<T> where T : class
     {
-        void Add(T entity);
+
+        IQueryable<T> Queryable();
+
+        IQueryable<T> Where(System.Linq.Expressions.Expression<Func<T, bool>> predicate);
 
         T GetById(int id);
 
-        IEnumerable<T> Get();
+        IEnumerable<T> GetAll();
 
-        void Remove(int id);
-
-        void Save();
+        void Add(T entity);
 
         void Update(T entity);
 
+        void Remove(int id);
+        
     }
 }
