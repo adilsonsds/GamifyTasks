@@ -35,7 +35,7 @@ namespace Api
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IAlunoDoCaseRepository, AlunoDoCaseRepository>();
-            services.AddScoped<ICaseRepository, CaseRepository>();
+            services.AddScoped<ICaseDeNegocioRepository, CaseDeNegocioRepository>();
             services.AddScoped<IEntregaDeLicaoRepository, EntregaDeLicaoRepository>();
             services.AddScoped<IEntregaDeTrofeuRepository, EntregaDeTrofeuRepository>();
             services.AddScoped<IGrupoRepository, GrupoRepository>();

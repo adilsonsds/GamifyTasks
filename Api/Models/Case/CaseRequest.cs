@@ -1,6 +1,6 @@
 namespace Api.Models
 {
-    public class CaseModel
+    public class CaseRequest
     {
         public int Id { get; set; }
         public string Nome { get; set; }

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace Domain.Entities
 {
-    public class Case
+    public class CaseDeNegocio
     {
-        public Case()
+        public CaseDeNegocio()
         {
             // Licoes = new List<Licao>();
             // Alunos = new List<AlunoDoCase>();

@@ -6,7 +6,7 @@ namespace Domain.Entities
     public class Grupo
     {
         public int Id { get; set; }
-        public Case Case { get; set; }
+        public CaseDeNegocio Case { get; set; }
         public string Nome { get; set; }
         public IList<MembroDoGrupo> Membros { get; set; }
     }

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infra.Configurations
 {
-    public class CaseConfiguration : IEntityTypeConfiguration<Case>
+    public class CaseDeNegocioConfiguration : IEntityTypeConfiguration<CaseDeNegocio>
     {
-        public void Configure(EntityTypeBuilder<Case> builder)
+        public void Configure(EntityTypeBuilder<CaseDeNegocio> builder)
         {
             builder.ToTable("case_negocio");
 

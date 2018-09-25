@@ -43,7 +43,7 @@ namespace Infra.Repositories
         public void Update(T entity)
         {
             Context.Set<T>().Update(entity);
-            Save();            
+            Save();
         }
 
         public void Remove(int id)
