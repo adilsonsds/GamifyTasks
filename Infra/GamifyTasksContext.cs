@@ -17,8 +17,9 @@ namespace Infra
         {
             modelBuilder.ApplyConfiguration(new CaseDeNegocioConfiguration());
             modelBuilder.ApplyConfiguration(new LicaoConfiguration());
-            modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
+            modelBuilder.ApplyConfiguration(new QuestaoConfiguration());
             modelBuilder.ApplyConfiguration(new TrofeuConfiguration());
+            modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
         }
     }
 }

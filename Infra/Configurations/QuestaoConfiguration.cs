@@ -1,40 +1,31 @@
-// using Domain.Entities;
-// using Microsoft.EntityFrameworkCore;
-// using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-// namespace Infra.Configurations
-// {
-//     public class QuestaoConfiguration : IEntityTypeConfiguration<Questao>
-//     {
-//         public void Configure(EntityTypeBuilder<Questao> builder)
-//         {
-//             builder.ToTable("Questao");
+namespace Infra.Configurations
+{
+    public class QuestaoConfiguration : IEntityTypeConfiguration<Questao>
+    {
+        public void Configure(EntityTypeBuilder<Questao> builder)
+        {
+            builder.ToTable("questao");
 
-//             builder.HasKey(p => p.Id);
+            builder.HasKey(p => p.Id);
 
-//             builder.Property(p => p.Id)
-//                 .HasColumnName("Id");
+            builder.Property(p => p.Id)
+                .HasColumnName("id_questao");
 
-//             builder.Property(p => p.Licao)
-//                 .HasColumnName("IdLicao");
+            builder.Property(p => p.IdLicao)
+                .HasColumnName("id_licao");
 
-//             builder.Property(p => p.NomeCompleto)
-//                 .HasColumnName("IdCase");
+            builder.Property(p => p.Titulo)
+                .HasColumnName("titulo")
+                .HasMaxLength(5000)
+                .IsRequired();
 
-//             builder.Property(p => p.Email)
-//                 .HasColumnName("Email")
-//                 .HasMaxLength(100)
-//                 .IsRequired();
-
-//             builder.Property(p => p.Senha)
-//                 .HasColumnName("Senha")
-//                 .HasMaxLength(50)
-//                 .IsRequired();
-
-//             builder.Property(p => p.DataHoraCadastro)
-//                 .HasColumnName("DataHoraCadastro")
-//                 .HasColumnType("TIMESTAMP(0)")
-//                 .IsRequired();
-//         }
-//     }
-// }
+            builder.Property(p => p.NotaMaxima)
+                .HasColumnName("nota_maxima")
+                .IsRequired();
+        }
+    }
+}
