@@ -1,5 +1,5 @@
 using System;
-using Api.Models;
+using Api.Models.Usuario;
 using Domain.Entities;
 using Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +20,10 @@ namespace Api.Controllers
         public ActionResult Get(int id)
         {
             var usuario = UsuarioRepository.GetById(id);
+
+            if (usuario == null)
+                return NotFound();
+
             return Ok(usuario);
         }
 
@@ -33,53 +37,41 @@ namespace Api.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]UsuarioModel usuarioModel)
         {
-            var usuario = new Usuario
-            {
-                NomeCompleto = $"{usuarioModel.Nome} {usuarioModel.Sobrenome}",
-                Email = usuarioModel.Email,
-                Senha = usuarioModel.Senha
-            };
+            var usuario = new Usuario();
+            usuarioModel.PreencherEntidade(usuario);
 
             try
             {
                 UsuarioRepository.Add(usuario);
-                // UsuarioRepository.Save();
-                return Ok(usuario.Id);
             }
-            catch (Exception)
+            catch
             {
-                return BadRequest("Erro ao criar usuário.");
+                return BadRequest();
             }
 
+            return Ok(usuario.Id);
         }
 
         [HttpPut("{id}")]
         public ActionResult<Usuario> Put([FromBody]UsuarioModel usuarioModel)
         {
+            var usuario = UsuarioRepository.GetById(usuarioModel.Id);
+
+            if (usuario == null)
+                return NotFound();
+
+            usuarioModel.PreencherEntidade(usuario);
+
             try
             {
-                var usuario = UsuarioRepository.GetById(usuarioModel.Id);
-
-                usuario.NomeCompleto = $"{usuarioModel.Nome} {usuarioModel.Sobrenome}";
-                usuario.Email = usuarioModel.Email;
-                usuario.Senha = usuarioModel.Senha;
-
                 UsuarioRepository.Update(usuario);
-                // UsuarioRepository.Save();
-
-                return Ok("Usuario atualizado com sucesso.");
             }
-            catch (Exception)
+            catch
             {
-                return BadRequest("Não foi possível salvar os dados.");
+                return BadRequest();
             }
-        }
 
-        [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
-        {
-            UsuarioRepository.Remove(id);
-            return Ok("Usuario removido com sucesso");
+            return NoContent();
         }
     }
 }

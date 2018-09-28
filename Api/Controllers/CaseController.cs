@@ -42,9 +42,7 @@ namespace Api.Controllers
             if (caseDeNegocio == null)
                 return NotFound();
 
-            var response = new CaseModel(caseDeNegocio);
-
-            return Ok(response);
+            return Ok(new CaseModel(caseDeNegocio));
         }
 
         [HttpGet]
@@ -74,17 +72,20 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return Ok(caseDeNegocio.Id);
         }
 
         [HttpPut("{id}")]
         public ActionResult<Usuario> Put([FromBody]CaseModel caseModel)
         {
-
             if (caseModel.Id <= 0)
                 return BadRequest();
 
             CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(caseModel.Id.Value);
+
+            if (caseDeNegocio == null)
+                return NotFound();
+
             caseModel.PreencherEntidade(caseDeNegocio);
 
             try
@@ -96,7 +97,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return NoContent();
         }
 
         #endregion
@@ -108,12 +109,10 @@ namespace Api.Controllers
         {
             var licoes = LicaoRepository.ListarPorCase(idCase);
 
-            var response = new
+            return Ok(new
             {
                 Licoes = licoes.Select(l => new LicaoModel(l)).ToList()
-            };
-
-            return Ok(response);
+            });
         }
 
         [HttpGet("{idCase}/licao/{idLicao}")]
@@ -158,7 +157,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return Ok(licao.Id);
         }
 
         [HttpPost("{idCase}/licao")]
@@ -189,7 +188,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return NoContent();
         }
         #endregion
 
@@ -251,7 +250,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return Ok(questao.Id);
         }
 
         [HttpPost("{idCase}/licao/{idLicao}/questao/{idQuestao}")]
@@ -282,7 +281,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return NoContent();
         }
         #endregion
 
@@ -343,7 +342,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return Ok(trofeu.Id);
         }
 
         [HttpPost("{idCase}/trofeu/{idTrofeu}")]
@@ -374,7 +373,7 @@ namespace Api.Controllers
                 return BadRequest();
             }
 
-            return Ok();
+            return NoContent();
         }
 
         #endregion

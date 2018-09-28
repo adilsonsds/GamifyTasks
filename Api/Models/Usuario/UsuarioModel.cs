@@ -1,4 +1,4 @@
-namespace Api.Models
+namespace Api.Models.Usuario
 {
     public class UsuarioModel
     {
@@ -7,5 +7,12 @@ namespace Api.Models
         public string Sobrenome { get; set; }
         public string Email { get; set; }
         public string Senha { get; set; }
+
+        public void PreencherEntidade(Domain.Entities.Usuario usuario)
+        {
+            usuario.NomeCompleto = $"{Nome} {Sobrenome}";
+            usuario.Email = Email;
+            usuario.Senha = Senha;
+        }
     }
 }
