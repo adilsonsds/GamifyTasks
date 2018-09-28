@@ -13,14 +13,20 @@ namespace Api.Controllers
     {
         private readonly ICaseDeNegocioRepository CaseDeNegocioRepository;
         private readonly ILicaoRepository LicaoRepository;
+        private readonly IQuestaoRepository QuestaoRepository;
         private readonly ITrofeuRepository TrofeuRepository;
 
         public Usuario UsuarioAutenticado { get; set; }
 
-        public CaseController(ICaseDeNegocioRepository caseDeNegocioRepository, ILicaoRepository licaoRepository, ITrofeuRepository trofeuRepository, IUsuarioRepository usuarioRepository)
+        public CaseController(ICaseDeNegocioRepository caseDeNegocioRepository,
+                              ILicaoRepository licaoRepository,
+                              IQuestaoRepository questaoRepository,
+                              ITrofeuRepository trofeuRepository,
+                              IUsuarioRepository usuarioRepository)
         {
             this.CaseDeNegocioRepository = caseDeNegocioRepository;
             this.LicaoRepository = licaoRepository;
+            this.QuestaoRepository = questaoRepository;
             this.TrofeuRepository = trofeuRepository;
 
             UsuarioAutenticado = usuarioRepository.GetById(1);
@@ -187,6 +193,99 @@ namespace Api.Controllers
         }
         #endregion
 
+        #region CRUD Questão
+
+        [HttpGet("{idCase}/licao/{idLicao}/questao")]
+        public ActionResult GetQuestoes(int idCase, int idLicao)
+        {
+            var questoes = QuestaoRepository.ListarPorCaseELicao(idCase, idLicao);
+
+            var response = new
+            {
+                Questoes = questoes.Select(q => new QuestaoModel(q)).ToList()
+            };
+
+            return Ok(response);
+        }
+
+        [HttpGet("{idCase}/licao/{idLicao}/questao/{idQuestao}")]
+        public ActionResult GetQuestao(int idCase, int idLicao, int idQuestao)
+        {
+            var questao = QuestaoRepository.GetById(idQuestao);
+
+            if (questao == null)
+                return NotFound();
+
+            var licao = LicaoRepository.GetById(idLicao);
+
+            if (licao == null || questao.IdLicao != licao.Id || licao.IdCase != idCase)
+                return BadRequest();
+
+            var response = new QuestaoModel(questao);
+
+            return Ok(response);
+        }
+
+        [HttpPost("{idCase}/licao/{idLicao}/questao")]
+        public ActionResult PostQuestao(int idCase, int idLicao, [FromBody]QuestaoModel questaoModel)
+        {
+            if (questaoModel.Id > 0)
+                return BadRequest();
+
+            Licao licao = LicaoRepository.GetById(idLicao);
+
+            if (licao == null || licao.Id != idLicao || licao.IdCase != idCase)
+                return BadRequest();
+
+            Questao questao = new Questao();
+            questao.IdLicao = licao.Id;
+
+            questaoModel.PreencherEntidade(questao);
+
+            try
+            {
+                QuestaoRepository.Add(questao);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("{idCase}/licao/{idLicao}/questao/{idQuestao}")]
+        public ActionResult PutQuestao(int idCase, int idLicao, [FromBody]QuestaoModel questaoModel)
+        {
+
+            if (questaoModel.Id <= 0)
+                return BadRequest();
+
+            Questao questao = QuestaoRepository.GetById(questaoModel.Id.Value);
+
+            if (questao == null || questao.IdLicao != idLicao)
+                return BadRequest();
+
+            Licao licao = LicaoRepository.GetById(idLicao);
+
+            if (licao == null || licao.IdCase != idCase)
+                return BadRequest();
+
+            questaoModel.PreencherEntidade(questao);
+
+            try
+            {
+                QuestaoRepository.Update(questao);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+        #endregion
+
         #region CRUD Troféu
 
         [HttpGet("{idCase}/trofeu")]
@@ -247,7 +346,7 @@ namespace Api.Controllers
             return Ok();
         }
 
-        [HttpPost("{idCase}/trofeu")]
+        [HttpPost("{idCase}/trofeu/{idTrofeu}")]
         public ActionResult PutTrofeu(int idCase, [FromBody]TrofeuModel trofeuModel)
         {
 
