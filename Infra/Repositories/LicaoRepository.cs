@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Domain.Entities;
 using Domain.Repositories;
 
@@ -8,7 +10,11 @@ namespace Infra.Repositories
         public LicaoRepository(GamifyTasksContext context)
             : base(context)
         {
-            
+        }
+
+        public IList<Licao> ListarPorCase(int idCase)
+        {
+            return Queryable().Where(l => l.IdCase == idCase).ToList();
         }
     }
 }

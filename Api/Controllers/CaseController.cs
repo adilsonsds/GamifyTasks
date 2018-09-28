@@ -12,12 +12,18 @@ namespace Api.Controllers
     public class CaseController : ControllerBase
     {
         private readonly ICaseDeNegocioRepository CaseDeNegocioRepository;
-        private readonly IUsuarioRepository UsuarioRepository;
+        private readonly ILicaoRepository LicaoRepository;
+        private readonly ITrofeuRepository TrofeuRepository;
 
-        public CaseController(ICaseDeNegocioRepository caseDeNegocioRepository, IUsuarioRepository usuarioRepository)
+        public Usuario UsuarioAutenticado { get; set; }
+
+        public CaseController(ICaseDeNegocioRepository caseDeNegocioRepository, ILicaoRepository licaoRepository, ITrofeuRepository trofeuRepository, IUsuarioRepository usuarioRepository)
         {
             this.CaseDeNegocioRepository = caseDeNegocioRepository;
-            this.UsuarioRepository = usuarioRepository;
+            this.LicaoRepository = licaoRepository;
+            this.TrofeuRepository = trofeuRepository;
+
+            UsuarioAutenticado = usuarioRepository.GetById(1);
         }
 
         #region CRUD Case de negócio
@@ -30,7 +36,7 @@ namespace Api.Controllers
             if (caseDeNegocio == null)
                 return NotFound();
 
-            var response = new CaseResponse(caseDeNegocio);
+            var response = new CaseModel(caseDeNegocio);
 
             return Ok(response);
         }
@@ -38,103 +44,240 @@ namespace Api.Controllers
         [HttpGet]
         public ActionResult Get()
         {
-            var cases = CaseDeNegocioRepository.Queryable();
-            var usuarios = UsuarioRepository.Queryable();
-            // cases = cases.Where(p => p.Nome.Contains("teste"));
+            var casesDeNegocios = CaseDeNegocioRepository.ListarPorProfessor(UsuarioAutenticado.Id);
+            var response = casesDeNegocios.Select(c => new CaseModel(c)).ToList();
 
-            var testeComLinq = (from c in cases
-                                join u in usuarios on c.IdProfessor equals u.Id
-                                where c.Nome.Contains("teste")
-                                select new
-                                {
-                                    Id = c.Id,
-                                    Nome = c.Nome,
-                                    Professor = u.NomeCompleto
-                                }).ToList();
-
-            // var resultado = cases
-            //         .Select(c => new
-            //         {
-            //             Id = c.Id,
-            //             Nome = c.Nome
-            //         })
-            //         .ToList();
-            return Ok(testeComLinq);
-
-            // var listaDeCases = CaseRepository.Get();
-            // return Ok(listaDeCases);
+            return Ok(response);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]CaseRequest request)
+        public IActionResult Post([FromBody]CaseModel caseModel)
         {
+            if (caseModel.Id > 0)
+                return BadRequest();
+
+            CaseDeNegocio caseDeNegocio = new CaseDeNegocio();
+            caseModel.PreencherEntidade(caseDeNegocio);
+
             try
             {
-                var professor = UsuarioRepository.GetById(1);
-
-                CaseDeNegocio caseDeNegocio = new CaseDeNegocio();
-                caseDeNegocio.IdProfessor = professor.Id;
-                caseDeNegocio.Nome = request.Nome;
-                caseDeNegocio.TextoDeApresentacao = request.TextoDeApresentacao;
-                caseDeNegocio.PermiteMontarGrupos = request.PermiteMontarGrupos;
-                caseDeNegocio.MinimoDeAlunosPorGrupo = request.MinimoDeAlunosPorGrupo;
-                caseDeNegocio.MaximoDeAlunosPorGrupo = request.MaximoDeAlunosPorGrupo;
-
-                CaseDeNegocioRepository.SaveOrUpdate(caseDeNegocio);
-                return Ok(caseDeNegocio.Id);
+                CaseDeNegocioRepository.Add(caseDeNegocio);
             }
-            catch (Exception)
+            catch
             {
-                return BadRequest("Erro ao processar dados.");
+                return BadRequest();
             }
+
+            return Ok();
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Usuario> Put([FromBody]CaseRequest request)
+        public ActionResult<Usuario> Put([FromBody]CaseModel caseModel)
         {
+
+            if (caseModel.Id <= 0)
+                return BadRequest();
+
+            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(caseModel.Id.Value);
+            caseModel.PreencherEntidade(caseDeNegocio);
+
             try
             {
-                var professor = UsuarioRepository.GetById(1);
-                var caseDeNegocio = CaseDeNegocioRepository.GetById(request.Id);
-
-                if (caseDeNegocio.IdProfessor != professor.Id)
-                    return Forbid();
-
-                caseDeNegocio.Nome = request.Nome;
-                caseDeNegocio.TextoDeApresentacao = request.TextoDeApresentacao;
-                caseDeNegocio.PermiteMontarGrupos = request.PermiteMontarGrupos;
-                caseDeNegocio.MinimoDeAlunosPorGrupo = request.MinimoDeAlunosPorGrupo;
-                caseDeNegocio.MaximoDeAlunosPorGrupo = request.MaximoDeAlunosPorGrupo;
-
-                CaseDeNegocioRepository.SaveOrUpdate(caseDeNegocio);
-                return Ok();
+                CaseDeNegocioRepository.Update(caseDeNegocio);
             }
-            catch (Exception)
+            catch
             {
-                return BadRequest("Erro ao processar dados.");
+                return BadRequest();
             }
+
+            return Ok();
         }
 
         #endregion
 
         #region CRUD Lição
 
-        // [HttpGet("{id}/licao")]
-        // public ActionResult GetLicao(int id)
-        // {
-        //     var caseDeNegocio = CaseDeNegocioRepository.GetById(id);
+        [HttpGet("{idCase}/licao")]
+        public ActionResult GetLicao(int idCase)
+        {
+            var licoes = LicaoRepository.ListarPorCase(idCase);
 
-        //     if (caseDeNegocio == null)
-        //         return NotFound();
+            var response = new
+            {
+                Licoes = licoes.Select(l => new LicaoModel(l)).ToList()
+            };
 
-        //     var response = new CaseResponse(caseDeNegocio);
+            return Ok(response);
+        }
 
-        //     return Ok(response);
-        // }
+        [HttpGet("{idCase}/licao/{idLicao}")]
+        public ActionResult GetLicao(int idCase, int idLicao)
+        {
+            var licao = LicaoRepository.GetById(idLicao);
 
+            if (licao == null)
+                return NotFound();
 
+            if (licao.IdCase != idCase)
+                return BadRequest();
+
+            var response = new LicaoModel(licao);
+
+            return Ok(response);
+        }
+
+        [HttpPost("{idCase}/licao")]
+        public ActionResult PostLicao(int idCase, [FromBody]LicaoModel licaoModel)
+        {
+
+            if (licaoModel.Id > 0)
+                return BadRequest();
+
+            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(idCase);
+
+            if (caseDeNegocio == null)
+                return BadRequest();
+
+            Licao licao = new Licao();
+            licao.IdCase = caseDeNegocio.Id;
+
+            licaoModel.PreencherEntidade(licao);
+
+            try
+            {
+                LicaoRepository.Add(licao);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("{idCase}/licao")]
+        public ActionResult PutLicao(int idCase, [FromBody]LicaoModel licaoModel)
+        {
+
+            if (licaoModel.Id <= 0)
+                return BadRequest();
+
+            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(idCase);
+
+            if (caseDeNegocio == null)
+                return BadRequest();
+
+            Licao licao = LicaoRepository.GetById(licaoModel.Id.Value);
+
+            if (licao == null || licao.IdCase != caseDeNegocio.Id)
+                return BadRequest();
+
+            licaoModel.PreencherEntidade(licao);
+
+            try
+            {
+                LicaoRepository.Update(licao);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
         #endregion
 
+        #region CRUD Troféu
 
+        [HttpGet("{idCase}/trofeu")]
+        public ActionResult GetTrofeu(int idCase)
+        {
+            var trofeus = TrofeuRepository.ListarPorCase(idCase);
+
+            var response = new
+            {
+                Trofeus = trofeus.Select(t => new TrofeuModel(t)).ToList()
+            };
+
+            return Ok(response);
+        }
+
+        [HttpGet("{idCase}/trofeu/{idTrofeu}")]
+        public ActionResult GetTrofeu(int idCase, int idTrofeu)
+        {
+            var trofeu = TrofeuRepository.GetById(idTrofeu);
+
+            if (trofeu == null)
+                return NotFound();
+
+            if (trofeu.IdCase != idCase)
+                return BadRequest();
+
+            var response = new TrofeuModel(trofeu);
+
+            return Ok(response);
+        }
+
+        [HttpPost("{idCase}/trofeu")]
+        public ActionResult PostTrofeu(int idCase, [FromBody]TrofeuModel trofeuModel)
+        {
+
+            if (trofeuModel.Id > 0)
+                return BadRequest();
+
+            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(idCase);
+
+            if (caseDeNegocio == null)
+                return BadRequest();
+
+            Trofeu trofeu = new Trofeu();
+            trofeu.IdCase = caseDeNegocio.Id;
+
+            trofeuModel.PreencherEntidade(trofeu);
+
+            try
+            {
+                TrofeuRepository.Add(trofeu);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("{idCase}/trofeu")]
+        public ActionResult PutTrofeu(int idCase, [FromBody]TrofeuModel trofeuModel)
+        {
+
+            if (trofeuModel.Id <= 0)
+                return BadRequest();
+
+            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(idCase);
+
+            if (caseDeNegocio == null)
+                return BadRequest();
+
+            Trofeu trofeu = TrofeuRepository.GetById(trofeuModel.Id.Value);
+
+            if (trofeu == null || trofeu.IdCase != caseDeNegocio.Id)
+                return BadRequest();
+
+            trofeuModel.PreencherEntidade(trofeu);
+
+            try
+            {
+                TrofeuRepository.Update(trofeu);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        #endregion
     }
 }

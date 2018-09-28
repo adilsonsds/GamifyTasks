@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Domain.Entities;
 using Domain.Repositories;
 
@@ -16,6 +18,11 @@ namespace Infra.Repositories
                 Update(caseDeNegocio);
             else
                 Add(caseDeNegocio);
+        }
+
+        public IList<CaseDeNegocio> ListarPorProfessor(int idProfessor)
+        {
+            return Queryable().Where(c => c.IdProfessor == idProfessor).ToList();
         }
     }
 }
