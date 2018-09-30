@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Repositories;
@@ -9,12 +11,13 @@ namespace Api.Models.Case
     {
         public LicaoModel()
         {
-
+            Questoes = new List<QuestaoModel>();
         }
 
-        public LicaoModel(Licao licao)
+        public LicaoModel(Licao licao) : this()
         {
             Id = licao.Id;
+            IdCase = licao.IdCase;
             Titulo = licao.Titulo;
             TextoApresentacao = licao.TextoApresentacao;
             Descricao = licao.Descricao;
@@ -22,9 +25,19 @@ namespace Api.Models.Case
             DataLiberacao = licao.DataLiberacao;
             DataEncerramento = licao.DataEncerramento;
             PermiteEntregasForaDoPrazo = licao.PermiteEntregasForaDoPrazo;
+            PermiteEditar = true;
+            PermiteAvaliar = true;
+            PermiteRealizar = true;
+            PermiteEntregar = true;
+        }
+
+        public LicaoModel(Licao licao, IList<Questao> questoes) : this(licao)
+        {
+            Questoes = questoes.Select(q => new QuestaoModel(q)).ToList();
         }
 
         public int? Id { get; set; }
+        public int IdCase { get; set; }
         public string Titulo { get; set; }
         public string TextoApresentacao { get; set; }
         public string Descricao { get; set; }
@@ -32,6 +45,11 @@ namespace Api.Models.Case
         public DateTime? DataLiberacao { get; set; }
         public DateTime? DataEncerramento { get; set; }
         public bool PermiteEntregasForaDoPrazo { get; set; }
+        public bool PermiteEditar { get; set; }
+        public bool PermiteAvaliar { get; set; }
+        public bool PermiteRealizar { get; set; }
+        public bool PermiteEntregar { get; set; }
+        public List<QuestaoModel> Questoes { get; set; }
 
         public void PreencherEntidade(Licao licao)
         {

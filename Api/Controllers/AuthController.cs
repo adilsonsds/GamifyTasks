@@ -16,7 +16,7 @@ namespace Api.Controllers
             this.UsuarioRepository = usuarioRepository;
         }
 
-        [HttpPost("/login")]
+        [HttpPost("login")]
         public ActionResult Login([FromBody]LoginModel loginModel)
         {
             Usuario usuario = UsuarioRepository.ObterPorEmailESenha(loginModel.Email, loginModel.Senha);

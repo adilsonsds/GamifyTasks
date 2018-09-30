@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using Api.Models;
 using Api.Models.Case;
 using Domain.Entities;
@@ -55,12 +56,13 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]CaseModel caseModel)
+        public ActionResult Post([FromBody]CaseModel caseModel)
         {
-            if (caseModel.Id > 0)
+            if (caseModel == null || caseModel.Id > 0)
                 return BadRequest();
 
             CaseDeNegocio caseDeNegocio = new CaseDeNegocio();
+            caseDeNegocio.IdProfessor = UsuarioAutenticado.Id;
             caseModel.PreencherEntidade(caseDeNegocio);
 
             try
@@ -76,9 +78,9 @@ namespace Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Usuario> Put([FromBody]CaseModel caseModel)
+        public ActionResult Put([FromBody]CaseModel caseModel)
         {
-            if (caseModel.Id <= 0)
+            if (caseModel == null || caseModel.Id <= 0)
                 return BadRequest();
 
             CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(caseModel.Id.Value);
@@ -126,19 +128,21 @@ namespace Api.Controllers
             if (licao.IdCase != idCase)
                 return BadRequest();
 
-            var response = new LicaoModel(licao);
+            var questoes = QuestaoRepository.ListarPorCaseELicao(idCase, idLicao);
+
+            var response = new LicaoModel(licao, questoes);
 
             return Ok(response);
         }
 
-        [HttpPost("{idCase}/licao")]
-        public ActionResult PostLicao(int idCase, [FromBody]LicaoModel licaoModel)
+        [HttpPost("{id}/licao")]
+        public ActionResult PostLicao([FromBody]LicaoModel licaoModel)
         {
 
-            if (licaoModel.Id > 0)
+            if (licaoModel == null || licaoModel.Id > 0)
                 return BadRequest();
 
-            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(idCase);
+            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(licaoModel.IdCase);
 
             if (caseDeNegocio == null)
                 return BadRequest();
@@ -151,6 +155,8 @@ namespace Api.Controllers
             try
             {
                 LicaoRepository.Add(licao);
+
+                ManterQuestoes(licao, licaoModel.Questoes, new List<Questao>());
             }
             catch
             {
@@ -160,14 +166,14 @@ namespace Api.Controllers
             return Ok(licao.Id);
         }
 
-        [HttpPost("{idCase}/licao")]
-        public ActionResult PutLicao(int idCase, [FromBody]LicaoModel licaoModel)
+        [HttpPut("{idCase}/licao/{idLicao}")]
+        public ActionResult PutLicao([FromBody]LicaoModel licaoModel)
         {
 
-            if (licaoModel.Id <= 0)
+            if (licaoModel == null || licaoModel.Id <= 0)
                 return BadRequest();
 
-            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(idCase);
+            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(licaoModel.IdCase);
 
             if (caseDeNegocio == null)
                 return BadRequest();
@@ -182,6 +188,9 @@ namespace Api.Controllers
             try
             {
                 LicaoRepository.Update(licao);
+
+                var questoesExistentes = QuestaoRepository.ListarPorCaseELicao(caseDeNegocio.Id, licao.Id);
+                ManterQuestoes(licao, licaoModel.Questoes, questoesExistentes);
             }
             catch
             {
@@ -190,98 +199,29 @@ namespace Api.Controllers
 
             return NoContent();
         }
-        #endregion
 
-        #region CRUD Questão
-
-        [HttpGet("{idCase}/licao/{idLicao}/questao")]
-        public ActionResult GetQuestoes(int idCase, int idLicao)
+        private void ManterQuestoes(Licao licao, IList<QuestaoModel> questoesParaSalvar, IList<Questao> questoesExistentes)
         {
-            var questoes = QuestaoRepository.ListarPorCaseELicao(idCase, idLicao);
-
-            var response = new
+            foreach (var questaoModel in questoesParaSalvar)
             {
-                Questoes = questoes.Select(q => new QuestaoModel(q)).ToList()
-            };
+                Questao questao = questoesExistentes.FirstOrDefault(q => q.Id == questaoModel.Id);
 
-            return Ok(response);
-        }
+                if (questao == null)
+                    questao = new Questao
+                    {
+                        IdLicao = licao.Id
+                    };
 
-        [HttpGet("{idCase}/licao/{idLicao}/questao/{idQuestao}")]
-        public ActionResult GetQuestao(int idCase, int idLicao, int idQuestao)
-        {
-            var questao = QuestaoRepository.GetById(idQuestao);
+                questaoModel.PreencherEntidade(questao);
 
-            if (questao == null)
-                return NotFound();
-
-            var licao = LicaoRepository.GetById(idLicao);
-
-            if (licao == null || questao.IdLicao != licao.Id || licao.IdCase != idCase)
-                return BadRequest();
-
-            var response = new QuestaoModel(questao);
-
-            return Ok(response);
-        }
-
-        [HttpPost("{idCase}/licao/{idLicao}/questao")]
-        public ActionResult PostQuestao(int idCase, int idLicao, [FromBody]QuestaoModel questaoModel)
-        {
-            if (questaoModel.Id > 0)
-                return BadRequest();
-
-            Licao licao = LicaoRepository.GetById(idLicao);
-
-            if (licao == null || licao.Id != idLicao || licao.IdCase != idCase)
-                return BadRequest();
-
-            Questao questao = new Questao();
-            questao.IdLicao = licao.Id;
-
-            questaoModel.PreencherEntidade(questao);
-
-            try
-            {
-                QuestaoRepository.Add(questao);
-            }
-            catch
-            {
-                return BadRequest();
+                QuestaoRepository.SaveOrUpdate(questao);
             }
 
-            return Ok(questao.Id);
-        }
-
-        [HttpPost("{idCase}/licao/{idLicao}/questao/{idQuestao}")]
-        public ActionResult PutQuestao(int idCase, int idLicao, [FromBody]QuestaoModel questaoModel)
-        {
-
-            if (questaoModel.Id <= 0)
-                return BadRequest();
-
-            Questao questao = QuestaoRepository.GetById(questaoModel.Id.Value);
-
-            if (questao == null || questao.IdLicao != idLicao)
-                return BadRequest();
-
-            Licao licao = LicaoRepository.GetById(idLicao);
-
-            if (licao == null || licao.IdCase != idCase)
-                return BadRequest();
-
-            questaoModel.PreencherEntidade(questao);
-
-            try
+            var questoesRemovidas = questoesExistentes.Where(qe => !questoesParaSalvar.Any(qs => qs.Id == qe.Id)).ToList();
+            foreach (var questaoParaRemover in questoesRemovidas)
             {
-                QuestaoRepository.Update(questao);
+                QuestaoRepository.Remove(questaoParaRemover.Id);
             }
-            catch
-            {
-                return BadRequest();
-            }
-
-            return NoContent();
         }
         #endregion
 
@@ -291,11 +231,7 @@ namespace Api.Controllers
         public ActionResult GetTrofeu(int idCase)
         {
             var trofeus = TrofeuRepository.ListarPorCase(idCase);
-
-            var response = new
-            {
-                Trofeus = trofeus.Select(t => new TrofeuModel(t)).ToList()
-            };
+            var response = trofeus.Select(t => new TrofeuModel(t)).ToList();
 
             return Ok(response);
         }
@@ -317,13 +253,12 @@ namespace Api.Controllers
         }
 
         [HttpPost("{idCase}/trofeu")]
-        public ActionResult PostTrofeu(int idCase, [FromBody]TrofeuModel trofeuModel)
+        public ActionResult PostTrofeu([FromBody]TrofeuModel trofeuModel)
         {
-
-            if (trofeuModel.Id > 0)
+            if (trofeuModel == null || trofeuModel.Id > 0)
                 return BadRequest();
 
-            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(idCase);
+            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(trofeuModel.IdCase);
 
             if (caseDeNegocio == null)
                 return BadRequest();
@@ -345,14 +280,13 @@ namespace Api.Controllers
             return Ok(trofeu.Id);
         }
 
-        [HttpPost("{idCase}/trofeu/{idTrofeu}")]
-        public ActionResult PutTrofeu(int idCase, [FromBody]TrofeuModel trofeuModel)
+        [HttpPut("{idCase}/trofeu/{idTrofeu}")]
+        public ActionResult PutTrofeu([FromBody]TrofeuModel trofeuModel)
         {
-
-            if (trofeuModel.Id <= 0)
+            if (trofeuModel == null || trofeuModel.Id <= 0)
                 return BadRequest();
 
-            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(idCase);
+            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(trofeuModel.IdCase);
 
             if (caseDeNegocio == null)
                 return BadRequest();
