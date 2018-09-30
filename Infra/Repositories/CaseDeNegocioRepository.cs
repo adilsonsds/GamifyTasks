@@ -22,7 +22,7 @@ namespace Infra.Repositories
 
         public IList<CaseDeNegocio> ListarPorProfessor(int idProfessor)
         {
-            return Queryable().Where(c => c.IdProfessor == idProfessor).ToList();
+            return Queryable().Where(c => c.IdProfessor == idProfessor).OrderBy(c => c.Nome).ToList();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Infra.Repositories
 
         public IList<Licao> ListarPorCase(int idCase)
         {
-            return Queryable().Where(l => l.IdCase == idCase).ToList();
+            return Queryable().Where(l => l.IdCase == idCase).OrderBy(l => l.Id).ToList();
         }
     }
 }

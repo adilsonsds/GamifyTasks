@@ -39,11 +39,12 @@ namespace Api.Controllers
         public ActionResult Get(int id)
         {
             var caseDeNegocio = CaseDeNegocioRepository.GetById(id);
+            var professor = UsuarioAutenticado; //TODO alterar
 
             if (caseDeNegocio == null)
                 return NotFound();
 
-            return Ok(new CaseModel(caseDeNegocio));
+            return Ok(new CaseModel(caseDeNegocio, professor));
         }
 
         [HttpGet]

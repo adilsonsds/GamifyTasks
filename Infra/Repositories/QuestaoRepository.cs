@@ -26,6 +26,7 @@ namespace Infra.Repositories
             var lista = (from q in questao
                              //  join l in licao on q.IdLicao equals l.Id
                          where q.IdLicao == idLicao //&& l.IdCase == idCase
+                         orderby q.Id
                          select q).ToList();
 
             return lista;
