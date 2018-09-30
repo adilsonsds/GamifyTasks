@@ -31,13 +31,15 @@ namespace Api.Models.Case
             PermiteEntregar = true;
         }
 
-        public LicaoModel(Licao licao, IList<Questao> questoes) : this(licao)
+        public LicaoModel(Licao licao, CaseDeNegocio caseDeNegocio, IList<Questao> questoes) : this(licao)
         {
+            NomeCase = caseDeNegocio.Nome;
             Questoes = questoes.Select(q => new QuestaoModel(q)).ToList();
         }
 
         public int? Id { get; set; }
         public int IdCase { get; set; }
+        public string NomeCase { get; set; }
         public string Titulo { get; set; }
         public string TextoApresentacao { get; set; }
         public string Descricao { get; set; }

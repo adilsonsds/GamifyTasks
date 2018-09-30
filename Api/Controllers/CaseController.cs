@@ -30,7 +30,7 @@ namespace Api.Controllers
             this.QuestaoRepository = questaoRepository;
             this.TrofeuRepository = trofeuRepository;
 
-            UsuarioAutenticado = usuarioRepository.GetById(1);
+            UsuarioAutenticado = usuarioRepository.Queryable().OrderByDescending(u => u.Id).FirstOrDefault();
         }
 
         #region CRUD Case de negócio
@@ -130,8 +130,8 @@ namespace Api.Controllers
                 return BadRequest();
 
             var questoes = QuestaoRepository.ListarPorCaseELicao(idCase, idLicao);
-
-            var response = new LicaoModel(licao, questoes);
+            var caseDeNegocio = CaseDeNegocioRepository.GetById(licao.IdCase);
+            var response = new LicaoModel(licao, caseDeNegocio, questoes);
 
             return Ok(response);
         }
