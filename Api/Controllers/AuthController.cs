@@ -1,7 +1,7 @@
 using System;
 using Api.Models.Auth;
 using Domain.Entities;
-using Domain.Repositories;
+using Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers

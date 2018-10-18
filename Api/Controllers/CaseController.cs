@@ -4,30 +4,29 @@ using System.Collections.Generic;
 using Api.Models;
 using Api.Models.Case;
 using Domain.Entities;
-using Domain.Repositories;
+using Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Domain.Interfaces.Services;
 
 namespace Api.Controllers
 {
     [Route("api/case")]
     public class CaseController : ControllerBase
     {
+        private readonly ICaseDeNegocioService _caseDeNegocioService;
         private readonly ICaseDeNegocioRepository CaseDeNegocioRepository;
-        private readonly ILicaoRepository LicaoRepository;
-        private readonly IQuestaoRepository QuestaoRepository;
         private readonly ITrofeuRepository TrofeuRepository;
 
         public Usuario UsuarioAutenticado { get; set; }
 
-        public CaseController(ICaseDeNegocioRepository caseDeNegocioRepository,
-                              ILicaoRepository licaoRepository,
-                              IQuestaoRepository questaoRepository,
+        public CaseController(ICaseDeNegocioService caseDeNegocioService,
+                              ICaseDeNegocioRepository caseDeNegocioRepository,
                               ITrofeuRepository trofeuRepository,
                               IUsuarioRepository usuarioRepository)
         {
+            _caseDeNegocioService = caseDeNegocioService;
+
             this.CaseDeNegocioRepository = caseDeNegocioRepository;
-            this.LicaoRepository = licaoRepository;
-            this.QuestaoRepository = questaoRepository;
             this.TrofeuRepository = trofeuRepository;
 
             UsuarioAutenticado = usuarioRepository.Queryable().OrderByDescending(u => u.Id).FirstOrDefault();
@@ -38,13 +37,12 @@ namespace Api.Controllers
         [HttpGet("{id}")]
         public ActionResult Get(int id)
         {
-            var caseDeNegocio = CaseDeNegocioRepository.GetById(id);
-            var professor = UsuarioAutenticado; //TODO alterar
+            var caseDeNegocio = _caseDeNegocioService.ObterPorId(id);
 
             if (caseDeNegocio == null)
                 return NotFound();
 
-            return Ok(new CaseModel(caseDeNegocio, professor));
+            return Ok(new CaseModel(caseDeNegocio));
         }
 
         [HttpGet]
@@ -103,127 +101,6 @@ namespace Api.Controllers
             return NoContent();
         }
 
-        #endregion
-
-        #region CRUD Lição
-
-        [HttpGet("{idCase}/licao")]
-        public ActionResult GetLicao(int idCase)
-        {
-            var licoes = LicaoRepository.ListarPorCase(idCase);
-
-            return Ok(new
-            {
-                Licoes = licoes.Select(l => new LicaoModel(l)).ToList()
-            });
-        }
-
-        [HttpGet("{idCase}/licao/{idLicao}")]
-        public ActionResult GetLicao(int idCase, int idLicao)
-        {
-            var licao = LicaoRepository.GetById(idLicao);
-
-            if (licao == null)
-                return NotFound();
-
-            if (licao.IdCase != idCase)
-                return BadRequest();
-
-            var questoes = QuestaoRepository.ListarPorCaseELicao(idCase, idLicao);
-            var caseDeNegocio = CaseDeNegocioRepository.GetById(licao.IdCase);
-            var response = new LicaoModel(licao, caseDeNegocio, questoes);
-
-            return Ok(response);
-        }
-
-        [HttpPost("{id}/licao")]
-        public ActionResult PostLicao([FromBody]LicaoModel licaoModel)
-        {
-
-            if (licaoModel == null || licaoModel.Id > 0)
-                return BadRequest();
-
-            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(licaoModel.IdCase);
-
-            if (caseDeNegocio == null)
-                return BadRequest();
-
-            Licao licao = new Licao();
-            licao.IdCase = caseDeNegocio.Id;
-
-            licaoModel.PreencherEntidade(licao);
-
-            try
-            {
-                LicaoRepository.Add(licao);
-
-                ManterQuestoes(licao, licaoModel.Questoes, new List<Questao>());
-            }
-            catch
-            {
-                return BadRequest();
-            }
-
-            return Ok(licao.Id);
-        }
-
-        [HttpPut("{idCase}/licao/{idLicao}")]
-        public ActionResult PutLicao([FromBody]LicaoModel licaoModel)
-        {
-
-            if (licaoModel == null || licaoModel.Id <= 0)
-                return BadRequest();
-
-            CaseDeNegocio caseDeNegocio = CaseDeNegocioRepository.GetById(licaoModel.IdCase);
-
-            if (caseDeNegocio == null)
-                return BadRequest();
-
-            Licao licao = LicaoRepository.GetById(licaoModel.Id.Value);
-
-            if (licao == null || licao.IdCase != caseDeNegocio.Id)
-                return BadRequest();
-
-            licaoModel.PreencherEntidade(licao);
-
-            try
-            {
-                LicaoRepository.Update(licao);
-
-                var questoesExistentes = QuestaoRepository.ListarPorCaseELicao(caseDeNegocio.Id, licao.Id);
-                ManterQuestoes(licao, licaoModel.Questoes, questoesExistentes);
-            }
-            catch
-            {
-                return BadRequest();
-            }
-
-            return NoContent();
-        }
-
-        private void ManterQuestoes(Licao licao, IList<QuestaoModel> questoesParaSalvar, IList<Questao> questoesExistentes)
-        {
-            foreach (var questaoModel in questoesParaSalvar)
-            {
-                Questao questao = questoesExistentes.FirstOrDefault(q => q.Id == questaoModel.Id);
-
-                if (questao == null)
-                    questao = new Questao
-                    {
-                        IdLicao = licao.Id
-                    };
-
-                questaoModel.PreencherEntidade(questao);
-
-                QuestaoRepository.SaveOrUpdate(questao);
-            }
-
-            var questoesRemovidas = questoesExistentes.Where(qe => !questoesParaSalvar.Any(qs => qs.Id == qe.Id)).ToList();
-            foreach (var questaoParaRemover in questoesRemovidas)
-            {
-                QuestaoRepository.Remove(questaoParaRemover.Id);
-            }
-        }
         #endregion
 
         #region CRUD Troféu

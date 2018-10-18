@@ -1,15 +1,15 @@
 using Domain.Entities;
 
-namespace Api.Models.Case
+namespace Domain.DTO
 {
-    public class QuestaoModel
+    public class QuestaoDTO
     {
-        public QuestaoModel()
+        public QuestaoDTO()
         {
 
         }
 
-        public QuestaoModel(Questao questao)
+        public QuestaoDTO(Questao questao)
         {
             Id = questao.Id;
             Titulo = questao.Titulo;
@@ -17,8 +17,11 @@ namespace Api.Models.Case
         }
 
         public int? Id { get; set; }
+        public int IdCase { get; set; }
+        public int IdLicao { get; set; }
         public string Titulo { get; set; }
         public int NotaMaxima { get; set; }
+        public bool PermiteEditar { get; set; }
 
         public void PreencherEntidade(Questao questao)
         {

@@ -6,8 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Infra;
-using Domain.Repositories;
+using Domain.Interfaces.Repositories;
 using Infra.Repositories;
+using Domain.Interfaces.Services;
+using Domain.Services;
 
 namespace Api
 {
@@ -33,20 +35,25 @@ namespace Api
                 )
             );
 
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<IAlunoDoCaseRepository, AlunoDoCaseRepository>();
-            services.AddScoped<ICaseDeNegocioRepository, CaseDeNegocioRepository>();
-            services.AddScoped<IEntregaDeLicaoRepository, EntregaDeLicaoRepository>();
-            services.AddScoped<IEntregaDeTrofeuRepository, EntregaDeTrofeuRepository>();
-            services.AddScoped<IGrupoRepository, GrupoRepository>();
-            services.AddScoped<ILicaoRepository, LicaoRepository>();
-            services.AddScoped<IMembroDoGrupoRepository, MembroDoGrupoRepository>();
-            services.AddScoped<IQuestaoRepository, QuestaoRepository>();
-            services.AddScoped<IResponsavelPelaLicaoRepository, ResponsavelPelaLicaoRepository>();
-            services.AddScoped<IRespostaRepository, RespostaRepository>();
-            services.AddScoped<ITrofeuRepository, TrofeuRepository>();
-            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-            
+            services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<IAlunoDoCaseRepository, AlunoDoCaseRepository>();
+            services.AddTransient<ICaseDeNegocioRepository, CaseDeNegocioRepository>();
+            services.AddTransient<IEntregaDeLicaoRepository, EntregaDeLicaoRepository>();
+            services.AddTransient<IEntregaDeTrofeuRepository, EntregaDeTrofeuRepository>();
+            services.AddTransient<IGrupoRepository, GrupoRepository>();
+            services.AddTransient<ILicaoRepository, LicaoRepository>();
+            services.AddTransient<IMembroDoGrupoRepository, MembroDoGrupoRepository>();
+            services.AddTransient<IQuestaoRepository, QuestaoRepository>();
+            services.AddTransient<IResponsavelPelaLicaoRepository, ResponsavelPelaLicaoRepository>();
+            services.AddTransient<IRespostaRepository, RespostaRepository>();
+            services.AddTransient<ITrofeuRepository, TrofeuRepository>();
+            services.AddTransient<IUsuarioRepository, UsuarioRepository>();
+
+            services.AddTransient(typeof(IService<>), typeof(BaseService<>));
+            services.AddTransient<ICaseDeNegocioService, CaseDeNegocioService>();
+            services.AddTransient<ILicaoService, LicaoService>();
+            services.AddTransient<IQuestaoService, QuestaoService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,7 +68,7 @@ namespace Api
                 app.UseHsts();
             }
 
-            app.UseCors(builder => 
+            app.UseCors(builder =>
                 builder
                     .WithOrigins("http://localhost:8080")
                     .AllowAnyHeader()

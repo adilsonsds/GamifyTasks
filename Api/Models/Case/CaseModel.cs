@@ -17,13 +17,20 @@ namespace Api.Models
             PermiteMontarGrupos = caseDeNegocios.PermiteMontarGrupos;
             MinimoAlunosGrupo = caseDeNegocios.MinimoDeAlunosPorGrupo;
             MaximoAlunosGrupo = caseDeNegocios.MaximoDeAlunosPorGrupo;
+            IdProfessor = caseDeNegocios.IdProfessor;
+            NomeProfessor = caseDeNegocios.Professor.NomeCompleto;
         }
 
         public CaseModel(CaseDeNegocio caseDeNegocios, Domain.Entities.Usuario professor)
         : this(caseDeNegocios)
         {
-            IdProfessor = professor.Id;
-            NomeProfessor = professor.NomeCompleto;
+            // IdProfessor = professor.Id;
+            // NomeProfessor = professor.NomeCompleto;
+            if (caseDeNegocios.Professor != null)
+            {
+                IdProfessor = caseDeNegocios.Professor.Id;
+                NomeProfessor = caseDeNegocios.Professor.NomeCompleto;
+            }
         }
 
         public int? Id { get; set; }

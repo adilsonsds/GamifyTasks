@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Entities;
-using Domain.Repositories;
+using Domain.Interfaces.Repositories;
 
 namespace Infra.Repositories
 {
@@ -10,11 +10,17 @@ namespace Infra.Repositories
         public LicaoRepository(GamifyTasksContext context)
             : base(context)
         {
+            
         }
 
-        public IList<Licao> ListarPorCase(int idCase)
+        public IEnumerable<Licao> Listar(int idCaseDeNegocio, int? idLicao = null)
         {
-            return Queryable().Where(l => l.IdCase == idCase).OrderBy(l => l.Id).ToList();
+            var query = Queryable().Where(l => l.IdCase == idCaseDeNegocio);
+
+            if (idLicao.HasValue && idLicao > 0)
+                query = query.Where(l => l.Id == idLicao);
+
+            return query.OrderBy(l => l.Id).ToList();
         }
     }
 }

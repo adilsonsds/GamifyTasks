@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using Domain.Entities;
 
-namespace Domain.Repositories
+namespace Domain.Interfaces.Repositories
 {
     public interface ILicaoRepository : IRepository<Licao>
     {
-        IList<Licao> ListarPorCase(int idCase);
+        IEnumerable<Licao> Listar(int idCaseDeNegocio, int? idLicao = null);
 
     }
 }

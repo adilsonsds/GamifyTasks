@@ -46,6 +46,10 @@ namespace Infra.Configurations
             builder.Property(p => p.PermiteEntregasForaDoPrazo)
                 .HasColumnName("permite_entregas_fora_do_prazo")
                 .IsRequired();
+
+            builder.HasOne(p => p.CaseDeNegocio)
+                .WithMany()
+                .HasForeignKey(p => p.IdCase);
         }
     }
 }

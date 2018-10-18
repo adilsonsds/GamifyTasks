@@ -1,6 +1,6 @@
 using System.Linq;
 using Domain.Entities;
-using Domain.Repositories;
+using Domain.Interfaces.Repositories;
 
 namespace Infra.Repositories
 {

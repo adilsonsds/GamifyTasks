@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Domain.Entities;
-using Domain.Repositories;
+using Domain.Interfaces.Repositories;
 
 namespace Infra.Repositories
 {
@@ -10,26 +10,17 @@ namespace Infra.Repositories
         public QuestaoRepository(GamifyTasksContext context)
             : base(context) { }
 
-        public void SaveOrUpdate(Questao questao)
-        {
-            if (questao.Id > 0)
-                Update(questao);
-            else
-                Add(questao);
-        }
-        
-        public IList<Questao> ListarPorCaseELicao(int idCase, int idLicao)
-        {
-            // var licao = LicaoRepository.Queryable();
-            var questao = Queryable();
 
-            var lista = (from q in questao
-                             //  join l in licao on q.IdLicao equals l.Id
-                         where q.IdLicao == idLicao //&& l.IdCase == idCase
-                         orderby q.Id
-                         select q).ToList();
+        public IEnumerable<Questao> Listar(int idCaseDeNegocio, int idLicao, int? idQuestao = null)
+        {
+            var questoes = Queryable()
+                .Where(q => q.Licao.Id == idLicao
+                         && q.Licao.CaseDeNegocio.Id == idCaseDeNegocio);
 
-            return lista;
+            if (idQuestao.HasValue && idQuestao > 0)
+                questoes = questoes.Where(q => q.Id == idQuestao);
+
+            return questoes.OrderBy(q => q.Id).ToList();
         }
     }
 }

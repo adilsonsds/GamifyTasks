@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Domain.Entities;
 
-namespace Domain.Repositories
+namespace Domain.Interfaces.Repositories
 {
     public interface ICaseDeNegocioRepository : IRepository<CaseDeNegocio>
     {

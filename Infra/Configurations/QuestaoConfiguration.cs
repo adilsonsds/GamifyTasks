@@ -26,6 +26,10 @@ namespace Infra.Configurations
             builder.Property(p => p.NotaMaxima)
                 .HasColumnName("nota_maxima")
                 .IsRequired();
+
+            builder.HasOne(p => p.Licao)
+                .WithMany()
+                .HasForeignKey(p => p.IdLicao);
         }
     }
 }

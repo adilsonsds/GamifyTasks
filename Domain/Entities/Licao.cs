@@ -4,7 +4,7 @@ using Domain.Enums;
 
 namespace Domain.Entities
 {
-    public class Licao
+    public class Licao : TEntity
     {
         public Licao()
         {
@@ -12,7 +12,6 @@ namespace Domain.Entities
             PermiteEntregasForaDoPrazo = true;
         }
 
-        public int Id { get; set; }
         public int IdCase { get; set; }
         public string Titulo { get; set; }
         public string TextoApresentacao { get; set; }
@@ -21,5 +20,6 @@ namespace Domain.Entities
         public DateTime? DataLiberacao { get; set; }
         public DateTime? DataEncerramento { get; set; }
         public bool PermiteEntregasForaDoPrazo { get; set; }
+        public virtual CaseDeNegocio CaseDeNegocio { get; set; }
     }
 }

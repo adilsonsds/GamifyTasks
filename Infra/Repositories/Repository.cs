@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Domain.Repositories;
+using Domain.Entities;
+using Domain.Interfaces.Repositories;
 
 namespace Infra.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly GamifyTasksContext Context;
 
@@ -14,42 +15,42 @@ namespace Infra.Repositories
             Context = context;
         }
 
-        public IQueryable<T> Queryable()
+        public IQueryable<TEntity> Queryable()
         {
-            return Context.Set<T>().AsQueryable<T>();
+            return Context.Set<TEntity>().AsQueryable<TEntity>();
         }
 
-        public IQueryable<T> Where(System.Linq.Expressions.Expression<Func<T, bool>> predicate)
+        public IQueryable<TEntity> Where(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate)
         {
             return Queryable().Where(predicate);
         }
 
-        public T GetById(int id)
+        public TEntity GetById(int id)
         {
-            return Context.Set<T>().Find(id);
+            return Context.Set<TEntity>().Find(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<TEntity> GetAll()
         {
-            return Context.Set<T>().ToList();
+            return Context.Set<TEntity>().ToList();
         }
 
-        public void Add(T entity)
+        public void Add(TEntity entity)
         {
-            Context.Set<T>().Add(entity);
+            Context.Set<TEntity>().Add(entity);
             Save();
         }
 
-        public void Update(T entity)
+        public void Update(TEntity entity)
         {
-            Context.Set<T>().Update(entity);
+            Context.Set<TEntity>().Update(entity);
             Save();
         }
 
         public void Remove(int id)
         {
             var type = GetById(id);
-            Context.Set<T>().Remove(type);
+            Context.Set<TEntity>().Remove(type);
             Save();
         }
 

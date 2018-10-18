@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace Domain.Entities
 {
-    public class Grupo
+    public class Grupo : TEntity
     {
-        public int Id { get; set; }
         public CaseDeNegocio Case { get; set; }
         public string Nome { get; set; }
         public IList<MembroDoGrupo> Membros { get; set; }
