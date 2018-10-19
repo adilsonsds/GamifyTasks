@@ -16,10 +16,18 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult Get(int idCase) => Ok(_licaoService.Listar(idCase));
+        public ActionResult Get(int idCase)
+        {
+            var lista = _licaoService.Listar(idCase);
+            return Ok(lista);
+        }
 
         [HttpGet("{idLicao}")]
-        public ActionResult Get(int idCase, int idLicao) => Ok(_licaoService.Listar(idCase, idLicao));
+        public ActionResult Get(int idCase, int idLicao)
+        {
+            var lista = _licaoService.Listar(idCase, idLicao);
+            return Ok(lista);
+        }
 
         [HttpPost]
         public ActionResult Post([FromBody]LicaoDTO licaoDTO)

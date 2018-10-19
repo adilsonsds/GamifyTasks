@@ -69,7 +69,7 @@ namespace Domain.Services
                 response.Add(questaoDTO);
             }
 
-            return null;
+            return response;
         }
 
         

@@ -10,10 +10,5 @@ namespace Domain.Services
             : base(repository)
         {
         }
-
-        public void Teste()
-        {
-
-        }
     }
 }

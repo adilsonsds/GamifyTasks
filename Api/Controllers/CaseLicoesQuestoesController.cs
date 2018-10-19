@@ -35,7 +35,7 @@ namespace Api.Controllers
             }
         }
 
-        [HttpPut("{idLicao}")]
+        [HttpPut]
         public ActionResult Put([FromBody]QuestaoDTO questaoDTO)
         {
             try

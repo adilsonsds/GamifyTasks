@@ -68,7 +68,7 @@ namespace Domain.Services
                 response.Add(licaoDTO);
             }
 
-            return null;
+            return response;
         }
     }
 }
