@@ -24,6 +24,7 @@ namespace Infra
             modelBuilder.ApplyConfiguration(new QuestaoConfiguration());
             modelBuilder.ApplyConfiguration(new TrofeuConfiguration());
             modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
+            modelBuilder.ApplyConfiguration(new GrupoConfiguration());
         }
     }
 }

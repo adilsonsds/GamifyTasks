@@ -54,6 +54,7 @@ namespace Api
             services.AddTransient<ILicaoService, LicaoService>();
             services.AddTransient<ITrofeuService, TrofeuService>();
             services.AddTransient<IUsuarioService, UsuarioService>();
+            services.AddTransient<IGrupoService, GrupoService>();
 
         }
 
