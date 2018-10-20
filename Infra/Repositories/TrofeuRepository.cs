@@ -13,9 +13,15 @@ namespace Infra.Repositories
 
         }
 
-        public IList<Trofeu> ListarPorCase(int idCaseDeNegocio)
+        public IEnumerable<Trofeu> Listar(int idCaseDeNegocio, int? idTrofeu = null)
         {
-            return Queryable().Where(t => t.IdCase == idCaseDeNegocio).OrderBy(t => t.Nome).ToList();
+            var query = Queryable().Where(l => l.IdCase == idCaseDeNegocio);
+
+            if (idTrofeu.HasValue && idTrofeu > 0)
+                query = query.Where(t => t.Id == idTrofeu);
+
+            return query.OrderBy(t => t.Nome).ToList();
         }
+        
     }
 }

@@ -5,12 +5,12 @@ using Domain.DTO;
 
 namespace Api.Controllers
 {
-    [Route("api/case/{idCase}/licao")]
-    public class CaseLicoesController : ControllerBase
+    [Route("api/v1/cases/{idCase}/licoes")]
+    public class LicoesController : ControllerBase
     {
         private readonly ILicaoService _licaoService;
 
-        public CaseLicoesController(ILicaoService licaoService)
+        public LicoesController(ILicaoService licaoService)
         {
             _licaoService = licaoService;
         }

@@ -10,6 +10,7 @@ namespace Domain.Entities
         {
             FormaDeEntrega = FormaDeEntregaDaLicaoEnum.SomenteIndividual;
             PermiteEntregasForaDoPrazo = true;
+            Questoes = new List<Questao>();
         }
 
         public int IdCase { get; set; }
@@ -21,5 +22,6 @@ namespace Domain.Entities
         public DateTime? DataEncerramento { get; set; }
         public bool PermiteEntregasForaDoPrazo { get; set; }
         public virtual CaseDeNegocio CaseDeNegocio { get; set; }
+        public virtual IList<Questao> Questoes { get; set; }
     }
 }

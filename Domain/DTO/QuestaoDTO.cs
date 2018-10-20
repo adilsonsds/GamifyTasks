@@ -17,8 +17,6 @@ namespace Domain.DTO
         }
 
         public int? Id { get; set; }
-        public int IdCase { get; set; }
-        public int IdLicao { get; set; }
         public string Titulo { get; set; }
         public int NotaMaxima { get; set; }
         public bool PermiteEditar { get; set; }

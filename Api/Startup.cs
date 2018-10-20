@@ -52,7 +52,8 @@ namespace Api
             services.AddTransient(typeof(IService<>), typeof(BaseService<>));
             services.AddTransient<ICaseDeNegocioService, CaseDeNegocioService>();
             services.AddTransient<ILicaoService, LicaoService>();
-            services.AddTransient<IQuestaoService, QuestaoService>();
+            services.AddTransient<ITrofeuService, TrofeuService>();
+            services.AddTransient<IUsuarioService, UsuarioService>();
 
         }
 

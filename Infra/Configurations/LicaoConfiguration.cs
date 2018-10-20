@@ -50,6 +50,11 @@ namespace Infra.Configurations
             builder.Property(p => p.PermiteEntregasForaDoPrazo)
                 .HasColumnName("permite_entregas_fora_do_prazo")
                 .IsRequired();
+
+            builder.HasMany(p => p.Questoes)
+                .WithOne()
+                .HasForeignKey(p => p.IdLicao);
+
         }
     }
 }

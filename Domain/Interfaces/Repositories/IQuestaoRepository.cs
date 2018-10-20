@@ -5,6 +5,6 @@ namespace Domain.Interfaces.Repositories
 {
     public interface IQuestaoRepository : IRepository<Questao>
     {
-        IEnumerable<Questao> Listar(int idCaseDeNegocio, int idLicao, int? idQuestao = null);        
+        IEnumerable<Questao> Listar(int idLicao, int? idQuestao = null);        
     }
 }

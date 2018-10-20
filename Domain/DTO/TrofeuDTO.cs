@@ -1,15 +1,15 @@
 using Domain.Entities;
 
-namespace Api.Models.Case
+namespace Domain.DTO
 {
-    public class TrofeuModel
+    public class TrofeuDTO
     {
-        public TrofeuModel()
+        public TrofeuDTO()
         {
 
         }
 
-        public TrofeuModel(Trofeu trofeu)
+        public TrofeuDTO(Trofeu trofeu) : this()
         {
             Id = trofeu.Id;
             IdCase = trofeu.IdCase;

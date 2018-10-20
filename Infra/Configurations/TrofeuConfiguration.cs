@@ -15,6 +15,10 @@ namespace Infra.Configurations
             builder.Property(p => p.Id)
                 .HasColumnName("id_trofeu");
 
+            builder.HasOne(p => p.CaseDeNegocio)
+                .WithMany()
+                .HasForeignKey(p => p.IdCase);
+
             builder.Property(p => p.IdCase)
                 .HasColumnName("id_case_negocio")
                 .IsRequired();

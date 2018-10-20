@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Domain.Entities;
 using Domain.Enums;
 
@@ -12,6 +14,7 @@ namespace Domain.DTO
             PermiteAvaliar = false;
             PermiteRealizar = false;
             PermiteEntregar = false;
+            Questoes = new List<QuestaoDTO>();
         }
 
         public LicaoDTO(Licao licao) : this()
@@ -26,6 +29,7 @@ namespace Domain.DTO
             DataLiberacao = licao.DataLiberacao;
             DataEncerramento = licao.DataEncerramento;
             PermiteEntregasForaDoPrazo = licao.PermiteEntregasForaDoPrazo;
+            Questoes = licao.Questoes.Select(q => new QuestaoDTO(q)).ToList();
         }
 
         public int? Id { get; set; }
@@ -42,6 +46,7 @@ namespace Domain.DTO
         public bool PermiteAvaliar { get; set; }
         public bool PermiteRealizar { get; set; }
         public bool PermiteEntregar { get; set; }
+        public IEnumerable<QuestaoDTO> Questoes { get; set; }
 
         public void PreencherEntidade(Licao licao)
         {

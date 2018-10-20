@@ -11,11 +11,9 @@ namespace Infra.Repositories
             : base(context) { }
 
 
-        public IEnumerable<Questao> Listar(int idCaseDeNegocio, int idLicao, int? idQuestao = null)
+        public IEnumerable<Questao> Listar(int idLicao, int? idQuestao = null)
         {
-            var questoes = Queryable()
-                .Where(q => q.Licao.Id == idLicao
-                         && q.Licao.CaseDeNegocio.Id == idCaseDeNegocio);
+            var questoes = Queryable().Where(q => q.Licao.Id == idLicao);
 
             if (idQuestao.HasValue && idQuestao > 0)
                 questoes = questoes.Where(q => q.Id == idQuestao);
