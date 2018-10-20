@@ -25,7 +25,7 @@ namespace Api.Controllers
         [HttpGet("{idCase}")]
         public ActionResult Get(int idCase)
         {
-            var lista = _caseDeNegocioService.Listar(idCase);
+            var lista = _caseDeNegocioService.ObterPorId(idCase);
             return Ok(lista);
         }
 
@@ -34,8 +34,8 @@ namespace Api.Controllers
         {
             try
             {
-                int idLicao = _caseDeNegocioService.Adicionar(caseDTO);
-                return Ok(idLicao);
+                int idCase = _caseDeNegocioService.Adicionar(caseDTO);
+                return Ok(idCase);
             }
             catch (Exception e)
             {

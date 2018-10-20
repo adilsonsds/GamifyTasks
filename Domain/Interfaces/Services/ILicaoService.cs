@@ -11,5 +11,7 @@ namespace Domain.Interfaces.Services
         void Atualizar(LicaoDTO licaoDTO);
 
         IEnumerable<LicaoDTO> Listar(int idCaseDeNegocio, int? idLicao = null);
+
+        LicaoDTO Obter(int idCaseDeNegocio, int idLicao);
     }
 }

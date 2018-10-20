@@ -73,14 +73,32 @@ namespace Domain.Services
             foreach (var licao in licoes)
             {
                 LicaoDTO licaoDTO = new LicaoDTO(licao);
+                licaoDTO.PermiteEditar = UsuarioLogadoPodeEditarLicao();
                 response.Add(licaoDTO);
             }
 
             return response;
         }
 
+        public LicaoDTO Obter(int idCaseDeNegocio, int idLicao)
+        {
+            var licao = ObterPorId(idLicao);
+
+            if (licao == null || licao.IdCase != idCaseDeNegocio)
+                throw new Exception("Lição não encontrada.");
+
+            LicaoDTO licaoDTO = new LicaoDTO(licao);
+            licaoDTO.PermiteEditar = UsuarioLogadoPodeEditarLicao();
+
+            return licaoDTO;
+        }
 
         #region Métodos privados
+        private bool UsuarioLogadoPodeEditarLicao()
+        {
+            return true;
+        }
+
         private void AtualizarListaDeQuestoes(Licao licao, IEnumerable<QuestaoDTO> questoesParaSalvar)
         {
             foreach (var questaoDTO in questoesParaSalvar)
@@ -91,7 +109,7 @@ namespace Domain.Services
                     questao = new Questao
                     {
                         IdLicao = licao.Id,
-                        Licao = licao
+                        // Licao = licao
                     };
 
                     licao.Questoes.Add(questao);

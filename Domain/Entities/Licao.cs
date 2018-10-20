@@ -22,6 +22,6 @@ namespace Domain.Entities
         public DateTime? DataEncerramento { get; set; }
         public bool PermiteEntregasForaDoPrazo { get; set; }
         public virtual CaseDeNegocio CaseDeNegocio { get; set; }
-        public virtual IList<Questao> Questoes { get; set; }
+        public virtual ICollection<Questao> Questoes { get; set; }
     }
 }

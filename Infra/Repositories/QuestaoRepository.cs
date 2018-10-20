@@ -13,7 +13,7 @@ namespace Infra.Repositories
 
         public IEnumerable<Questao> Listar(int idLicao, int? idQuestao = null)
         {
-            var questoes = Queryable().Where(q => q.Licao.Id == idLicao);
+            var questoes = Queryable().Where(q => q.IdLicao == idLicao);
 
             if (idQuestao.HasValue && idQuestao > 0)
                 questoes = questoes.Where(q => q.Id == idQuestao);

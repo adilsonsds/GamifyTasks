@@ -15,6 +15,10 @@ namespace Infra.Configurations
             builder.Property(p => p.Id)
                 .HasColumnName("id_questao");
 
+            // builder.HasOne(p => p.Licao)
+            //     .WithMany()
+            //     .HasForeignKey(p => p.IdLicao);
+
             builder.Property(p => p.IdLicao)
                 .HasColumnName("id_licao");
 
@@ -26,10 +30,6 @@ namespace Infra.Configurations
             builder.Property(p => p.NotaMaxima)
                 .HasColumnName("nota_maxima")
                 .IsRequired();
-
-            builder.HasOne(p => p.Licao)
-                .WithMany()
-                .HasForeignKey(p => p.IdLicao);
         }
     }
 }

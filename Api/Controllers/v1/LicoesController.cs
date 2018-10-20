@@ -25,8 +25,8 @@ namespace Api.Controllers
         [HttpGet("{idLicao}")]
         public ActionResult Get(int idCase, int idLicao)
         {
-            var lista = _licaoService.Listar(idCase, idLicao);
-            return Ok(lista);
+            var licao = _licaoService.Obter(idCase, idLicao);
+            return Ok(licao);
         }
 
         [HttpPost]

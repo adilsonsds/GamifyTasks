@@ -26,6 +26,7 @@ namespace Domain.Services
 
             CaseDeNegocio caseDeNegocio = new CaseDeNegocio();
             caseDTO.PreencherEntidade(caseDeNegocio);
+            caseDeNegocio.IdProfessor = 1;
 
             Adicionar(caseDeNegocio);
 
