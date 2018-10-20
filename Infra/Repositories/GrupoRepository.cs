@@ -15,8 +15,7 @@ namespace Infra.Repositories
 
         public IEnumerable<Grupo> Listar(int? idGrupo = null)
         {
-            var retorno = Queryable().ToList();
-            return retorno;
+            return GetAll().ToList();
         }
     }
 }
