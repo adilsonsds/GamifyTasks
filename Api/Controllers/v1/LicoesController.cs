@@ -2,9 +2,11 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Interfaces.Services;
 using Domain.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Api.Controllers
 {
+    [Authorize("Bearer")]
     [Route("api/v1/cases/{idCase}/licoes")]
     public class LicoesController : ControllerBase
     {

@@ -13,5 +13,10 @@ namespace Infra.Repositories
         {
             return Queryable().FirstOrDefault(u => u.Email == email && u.Senha == senha);
         }
+
+        public Usuario ObterPorEmail(string email)
+        {
+            return Queryable().Where(u => u.Email == email).FirstOrDefault();
+        }
     }
 }

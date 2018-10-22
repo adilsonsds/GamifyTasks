@@ -2,10 +2,12 @@ using System;
 using Api.Models.Usuario;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
+    [Authorize("Bearer")]
     [Route("api/v1/usuario")]
     public class UsuarioController : ControllerBase
     {
@@ -27,7 +29,7 @@ namespace Api.Controllers
             return Ok(usuario);
         }
 
-        [HttpGet]
+        [HttpGet, Authorize]
         public ActionResult Get()
         {
             var usuarios = UsuarioRepository.GetAll();

@@ -29,6 +29,7 @@ namespace Domain.DTO
         public int? MaximoAlunosGrupo { get; set; }
         public int IdProfessor { get; set; }
         public string NomeProfessor { get; set; }
+        public bool PermiteSeInscrever { get; set; }
 
         public void PreencherEntidade(CaseDeNegocio caseDeNegocio)
         {
