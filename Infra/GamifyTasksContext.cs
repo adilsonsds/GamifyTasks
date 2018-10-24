@@ -19,6 +19,7 @@ namespace Infra
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new AlunoDoCaseConfiguration());
             modelBuilder.ApplyConfiguration(new CaseDeNegocioConfiguration());
             modelBuilder.ApplyConfiguration(new LicaoConfiguration());
             modelBuilder.ApplyConfiguration(new QuestaoConfiguration());

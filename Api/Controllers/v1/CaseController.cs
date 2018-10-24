@@ -25,19 +25,33 @@ namespace Api.Controllers
         [HttpGet]
         public ActionResult Get()
         {
-            var lista = _caseDeNegocioService.Listar(_usuarioLogado.Obter());
-            return Ok(lista);
+            try
+            {
+                var lista = _caseDeNegocioService.ListarCasesDeNegocioAssociadosAoUsuario(_usuarioLogado.Obter());
+                return Ok(lista);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet("{idCase}")]
         public ActionResult Get(int idCase)
         {
-            var lista = _caseDeNegocioService.ObterPorId(idCase, _usuarioLogado.Obter());
-            return Ok(lista);
+            try
+            {
+                var response = _caseDeNegocioService.ObterDetalhesPorId(idCase, _usuarioLogado.Obter());
+                return Ok(response);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody]CaseDTO caseDTO)
+        public ActionResult Post([FromBody]CaseDetalhesDTO caseDTO)
         {
             try
             {
@@ -51,7 +65,7 @@ namespace Api.Controllers
         }
 
         [HttpPut("{idCase}")]
-        public ActionResult Put([FromBody]CaseDTO caseDTO)
+        public ActionResult Put([FromBody]CaseDetalhesDTO caseDTO)
         {
             try
             {
@@ -61,6 +75,20 @@ namespace Api.Controllers
             catch (Exception e)
             {
                 return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost("{idCase}/inscrever")]
+        public ActionResult Inscrever(int idCase)
+        {
+            try
+            {
+                _caseDeNegocioService.InscreverUsuarioNoCaseDeNegocio(idCase, _usuarioLogado.Obter());
+                return NoContent();
+            }
+            catch
+            {
+                return Unauthorized();
             }
         }
     }

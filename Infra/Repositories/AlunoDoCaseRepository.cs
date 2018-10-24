@@ -1,3 +1,4 @@
+using System.Linq;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
 
@@ -8,7 +9,12 @@ namespace Infra.Repositories
         public AlunoDoCaseRepository(GamifyTasksContext context)
             : base(context)
         {
-            
+
+        }
+
+        public bool UsuarioEstaAssociadoAoCaseDeNegocio(int idUsuario, int idCaseDeNegocio)
+        {
+            return Queryable().Any(a => a.IdUsuario == idUsuario && a.IdCaseDeNegocio == idCaseDeNegocio);
         }
     }
 }

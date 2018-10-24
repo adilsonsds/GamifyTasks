@@ -6,13 +6,14 @@ namespace Domain.Interfaces.Services
 {
     public interface ICaseDeNegocioService : IService<CaseDeNegocio>
     {
-        int Adicionar(CaseDTO caseDTO, Usuario usuarioLogado);
+        int Adicionar(CaseDetalhesDTO caseDTO, Usuario usuario);
 
-        void Atualizar(CaseDTO caseDTO, Usuario usuarioLogado);
+        void Atualizar(CaseDetalhesDTO caseDTO, Usuario usuario);
 
-        IEnumerable<CaseDTO> Listar(Usuario usuarioLogado, int? idCaseDeNegocio = null);
+        IEnumerable<CaseDTO> ListarCasesDeNegocioAssociadosAoUsuario(Usuario usuario);
         
-        CaseDTO ObterPorId(int idCaseDeNegocio, Usuario usuarioLogado);
+        CaseDetalhesDTO ObterDetalhesPorId(int idCaseDeNegocio, Usuario usuario);
         
+        void InscreverUsuarioNoCaseDeNegocio(int idCaseDeNegocio, Usuario usuario);
     }
 }

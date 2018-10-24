@@ -4,7 +4,19 @@ namespace Domain.Entities
 {
     public class AlunoDoCase : TEntity
     {
-        public CaseDeNegocio Case { get; set; }
-        public Usuario Aluno { get; set; }
+        public AlunoDoCase()
+        {
+
+        }
+
+        public AlunoDoCase(CaseDeNegocio caseDeNegocio, Usuario usuario)
+        {
+            IdCaseDeNegocio = caseDeNegocio.Id;
+            IdUsuario = usuario.Id;
+        }
+
+
+        public int IdCaseDeNegocio { get; set; }
+        public int IdUsuario { get; set; }
     }
 }
