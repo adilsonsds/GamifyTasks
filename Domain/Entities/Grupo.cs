@@ -4,8 +4,9 @@ namespace Domain.Entities
 {
     public class Grupo : TEntity
     {
-        //public virtual CaseDeNegocio Case { get; set; }
+        public int IdCase { get; set; }
+        public virtual CaseDeNegocio CaseDeNegocio { get; set; }
         public string Nome { get; set; }
-        //public IList<MembroDoGrupo> Membros { get; set; }
+        
     }
 }

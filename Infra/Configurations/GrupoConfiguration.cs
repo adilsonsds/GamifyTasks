@@ -18,9 +18,9 @@ namespace Infra.Configurations
             builder.Property(p => p.Nome)
                 .HasColumnName("nome");
 
-            // builder.HasMany(p => p.Membros)
-            //     .WithOne()
-            //     .HasForeignKey(p => p.Aluno.Id);
+            builder.HasOne(p => p.CaseDeNegocio)
+                .WithMany()
+                .HasForeignKey(p => p.IdCase);
 
         }
     }
