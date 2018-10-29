@@ -46,7 +46,7 @@ namespace Domain.Services
             Atualizar(grupo);
         }
 
-        public IEnumerable<GrupoDTO> Listar(int? idGrupo = null)
+        public IEnumerable<GrupoDTO> Listar(int idCaseDeNegocio,int? idGrupo = null)
         {
             List<GrupoDTO> response = new List<GrupoDTO>();
 
@@ -61,9 +61,16 @@ namespace Domain.Services
             return response;
         }
 
+        public GrupoDTO ObterPorId(int idCase, int idGrupo)
+        {
+            var grupo = _grupoRepository.Listar().Where(g => g.Id == idGrupo && g.IdCase == idCase).FirstOrDefault();
+            GrupoDTO response = new GrupoDTO(grupo);
+            return response;
+        }
+
 
         #region Métodos privados
-        
+
         #endregion
     }
 }

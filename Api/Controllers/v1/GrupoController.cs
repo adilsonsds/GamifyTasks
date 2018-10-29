@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Api.Controllers.v1
 {
     [Authorize("Bearer")]
-    [Route("api/v1/grupo")]
+    [Route("api/v1/cases/{idCase}/grupo")]
     public class GrupoController : ControllerBase
     {
         private readonly IGrupoService _grupoService;
@@ -18,10 +18,17 @@ namespace Api.Controllers.v1
         }
 
         [HttpGet]
-        public ActionResult Get()
+        public ActionResult Get(int idCase)
         {
-            var lista = _grupoService.Listar();
+            var lista = _grupoService.Listar(idCase);
             return Ok(lista);
+        }
+
+         [HttpGet("{idGrupo}")]
+        public ActionResult Get(int idCase, int idGrupo)
+        {
+            var grupo = _grupoService.ObterPorId(idCase, idGrupo);
+            return Ok(grupo);
         }
 
         [HttpPost]

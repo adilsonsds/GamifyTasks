@@ -16,12 +16,12 @@ namespace Domain.DTO
         {
             Id = grupo.Id;
             Nome = grupo.Nome;
-            //MembrosDoGrupo = grupo.Membros.Select(q => new MembroDoGrupoDTO(q)).ToList();
+            idCase = grupo.IdCase;
         }
 
         public int? Id { get; set; }
         public string Nome { get; set; }
-        //public List<MembroDoGrupo> MembrosDoGrupo { get; set; }
+        public int idCase { get; set; }
         public void PreencherEntidade(Grupo grupo)
         {
             grupo.Nome = Nome;

@@ -20,9 +20,9 @@ namespace Infra.Configurations
                 .HasMaxLength(100)
                 .IsRequired();
 
-            // builder.HasMany(p => p.Membros)
-            //     .WithOne()
-            //     .HasForeignKey(p => p.Aluno.Id);
+            builder.HasOne(p => p.CaseDeNegocio)
+                .WithMany()
+                .HasForeignKey(p => p.IdCase);
 
         }
     }
