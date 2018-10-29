@@ -9,12 +9,24 @@ namespace Infra.Repositories
         public AlunoDoCaseRepository(GamifyTasksContext context)
             : base(context)
         {
-
         }
 
         public bool UsuarioEstaAssociadoAoCaseDeNegocio(int idUsuario, int idCaseDeNegocio)
         {
-            return Queryable().Any(a => a.IdUsuario == idUsuario && a.IdCaseDeNegocio == idCaseDeNegocio);
+            return FiltrarPorUsuarioECaseDeNegocio(idUsuario, idCaseDeNegocio).Any();
         }
+
+        public AlunoDoCase Obter(int idUsuario, int idCaseDeNegocio)
+        {
+            return FiltrarPorUsuarioECaseDeNegocio(idUsuario, idCaseDeNegocio).FirstOrDefault();
+        }
+
+
+        #region Métodos privados
+        private IQueryable<AlunoDoCase> FiltrarPorUsuarioECaseDeNegocio(int idUsuario, int idCaseDeNegocio)
+        {
+            return Queryable().Where(a => a.IdUsuario == idUsuario && a.IdCaseDeNegocio == idCaseDeNegocio);
+        }
+        #endregion
     }
 }

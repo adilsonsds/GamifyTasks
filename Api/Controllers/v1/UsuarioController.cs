@@ -1,39 +1,56 @@
-using System;
 using Api.Models.Usuario;
+using Api.Security;
 using Domain.Entities;
 using Domain.Interfaces.Repositories;
+using Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers
+namespace Api.Controllers.v1
 {
     [Authorize("Bearer")]
-    [Route("api/v1/usuario")]
+    [Route("api/v1/usuarios")]
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioRepository UsuarioRepository;
+        private readonly IUsuarioService _usuarioService;
+        private readonly UsuarioLogado _usuarioLogado;
 
-        public UsuarioController(IUsuarioRepository usuarioRepository)
+        public UsuarioController(IUsuarioRepository usuarioRepository, IUsuarioService usuarioService,
+            UsuarioLogado usuarioLogado)
         {
             this.UsuarioRepository = usuarioRepository;
+            _usuarioService = usuarioService;
+            _usuarioLogado = usuarioLogado;
         }
 
-        [HttpGet("{id}")]
-        public ActionResult Get(int id)
+        [HttpGet("{idUsuario}")]
+        public ActionResult Get(int idUsuario)
         {
-            var usuario = UsuarioRepository.GetById(id);
-
-            if (usuario == null)
+            try
+            {
+                var response = _usuarioService.Obter(idUsuario);
+                return Ok(response);
+            }
+            catch
+            {
                 return NotFound();
-
-            return Ok(usuario);
+            }
         }
 
-        [HttpGet, Authorize]
+        [HttpGet]
         public ActionResult Get()
         {
-            var usuarios = UsuarioRepository.GetAll();
-            return Ok(usuarios);
+            try
+            {
+                var usuario = _usuarioLogado.Obter();
+                var response = _usuarioService.Obter(usuario.Id);
+                return Ok(response);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
 
         [HttpPost]

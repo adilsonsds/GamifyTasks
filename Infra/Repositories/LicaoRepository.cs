@@ -10,17 +10,15 @@ namespace Infra.Repositories
         public LicaoRepository(GamifyTasksContext context)
             : base(context)
         {
-            
+
         }
 
-        public IEnumerable<Licao> Listar(int idCaseDeNegocio, int? idLicao = null)
+        public IEnumerable<Licao> ListarPorCaseDeNegocio(int idCaseDeNegocio)
         {
-            var query = Queryable().Where(l => l.IdCase == idCaseDeNegocio);
-
-            if (idLicao.HasValue && idLicao > 0)
-                query = query.Where(l => l.Id == idLicao);
-
-            return query.OrderBy(l => l.Id).ToList();
+            return Queryable()
+                .Where(l => l.IdCase == idCaseDeNegocio)
+                .OrderBy(l => l.Id)
+                .ToList();
         }
     }
 }

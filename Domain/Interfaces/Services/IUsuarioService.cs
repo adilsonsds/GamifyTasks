@@ -7,5 +7,7 @@ namespace Domain.Interfaces.Services
     {
         UsuarioDTO Autenticar(LoginDTO loginDTO);
         
+        UsuarioDTO Obter(int idUsuario);
+        
     }
 }

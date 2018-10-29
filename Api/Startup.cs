@@ -58,10 +58,14 @@ namespace Api
 
             services.AddTransient(typeof(IService<>), typeof(BaseService<>));
             services.AddTransient<ICaseDeNegocioService, CaseDeNegocioService>();
+            services.AddTransient<IConsultaDeAlunosService, ConsultaDeAlunosService>();
+            services.AddTransient<IConsultaEntregaDeLicaoService, ConsultaEntregaDeLicaoService>();
+            services.AddTransient<IEntregaDeLicaoService, EntregaDeLicaoService>();
+            services.AddTransient<IGeracaoDeEntregaDeLicaoService, GeracaoDeEntregaDeLicaoService>();
+            services.AddTransient<IGrupoService, GrupoService>();
             services.AddTransient<ILicaoService, LicaoService>();
             services.AddTransient<ITrofeuService, TrofeuService>();
             services.AddTransient<IUsuarioService, UsuarioService>();
-            services.AddTransient<IGrupoService, GrupoService>();
 
             AddJwtAuthorization(services);
 
@@ -95,7 +99,8 @@ namespace Api
                         paramsValidation.ClockSkew = TimeSpan.Zero;
                     });
 
-            services.AddAuthorization(auth=>{
+            services.AddAuthorization(auth =>
+            {
                 auth
                 .AddPolicy("Bearer", new AuthorizationPolicyBuilder()
                 .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)

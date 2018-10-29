@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Api.Controllers
+namespace Api.Controllers.v1
 {
     [Route("api/v1/auth")]
     public class AuthController : ControllerBase

@@ -97,6 +97,14 @@ namespace Domain.Services
             _alunoDoCaseRepository.Add(alunoDoCase);
         }
 
+        public int? Localizar(LocalizarCaseRequest request)
+        {
+            return _caseDeNegocioRepository.Queryable()
+                .Where(c=>c.Id == request.Id)
+                .Select(c => (int?)c.Id)
+                .FirstOrDefault();
+        }
+
         #region Métodos privados
 
         private void AdicionarCasesDeNegociosAssociadosComoProfessor(List<CaseDTO> lista, Usuario usuario)
@@ -162,17 +170,17 @@ namespace Domain.Services
             return caseDeNegocio != null;
         }
 
-        private bool PermiteUsuarioEditarCaseDeNegocio(Usuario usuario, CaseDeNegocio caseDeNegocio)
+        public bool PermiteUsuarioEditarCaseDeNegocio(Usuario usuario, CaseDeNegocio caseDeNegocio)
         {
             return UsuarioEstaAssociadoAoCaseDeNegocioComoProfessor(usuario, caseDeNegocio);
         }
 
-        private bool UsuarioEstaAssociadoAoCaseDeNegocioComoProfessor(Usuario usuario, CaseDeNegocio caseDeNegocio)
+        public bool UsuarioEstaAssociadoAoCaseDeNegocioComoProfessor(Usuario usuario, CaseDeNegocio caseDeNegocio)
         {
             return ExisteUsuarioLogado(usuario) && ExisteCaseDeNegocio(caseDeNegocio) && caseDeNegocio.Professor == usuario;
         }
 
-        private bool UsuarioEstaInscritoNoCaseDeNegocio(Usuario usuario, CaseDeNegocio caseDeNegocio)
+        public bool UsuarioEstaInscritoNoCaseDeNegocio(Usuario usuario, CaseDeNegocio caseDeNegocio)
         {
             return _alunoDoCaseRepository.UsuarioEstaAssociadoAoCaseDeNegocio(usuario.Id, caseDeNegocio.Id);
         }

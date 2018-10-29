@@ -7,7 +7,7 @@ using Api.Models;
 using Microsoft.AspNetCore.Http;
 using Api.Security;
 
-namespace Api.Controllers
+namespace Api.Controllers.v1
 {
     [Authorize("Bearer")]
     [Route("api/v1/cases")]
@@ -15,11 +15,14 @@ namespace Api.Controllers
     {
         private readonly ICaseDeNegocioService _caseDeNegocioService;
         private readonly UsuarioLogado _usuarioLogado;
+        private readonly IConsultaDeAlunosService _consultaDeAlunosService;
 
-        public CaseController(ICaseDeNegocioService caseDeNegocioService, UsuarioLogado usuarioLogado)
+        public CaseController(ICaseDeNegocioService caseDeNegocioService, UsuarioLogado usuarioLogado,
+            IConsultaDeAlunosService consultaDeAlunosService)
         {
             _caseDeNegocioService = caseDeNegocioService;
             _usuarioLogado = usuarioLogado;
+            _consultaDeAlunosService = consultaDeAlunosService;
         }
 
         [HttpGet]
@@ -78,6 +81,23 @@ namespace Api.Controllers
             }
         }
 
+        [HttpGet("localizar")]
+        public ActionResult Localizar(int id)
+        {
+            try
+            {
+                var response = _caseDeNegocioService.Localizar(new LocalizarCaseRequest { Id = id });
+                if (response == null)
+                    return NotFound();
+                    
+                return Ok(response);
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
         [HttpPost("{idCase}/inscrever")]
         public ActionResult Inscrever(int idCase)
         {
@@ -89,6 +109,20 @@ namespace Api.Controllers
             catch
             {
                 return Unauthorized();
+            }
+        }
+
+        [HttpGet("{idCase}/alunos")]
+        public ActionResult Alunos(int idCase)
+        {
+            try
+            {
+                var response = _consultaDeAlunosService.ListarAlunosPorCase(idCase);
+                return Ok(response);
+            }
+            catch
+            {
+                return NotFound();
             }
         }
     }

@@ -23,10 +23,15 @@ namespace Domain.Services
         {
             _repository.Update(obj);
         }
-
+        
         public TEntity ObterPorId(int id)
         {
             return _repository.GetById(id);
         }
+    }
+
+    public class BaseService : IService
+    {
+
     }
 }

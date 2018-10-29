@@ -6,6 +6,7 @@ namespace Domain.Entities
     {
         public CaseDeNegocio()
         {
+            // Licoes = new List<Licao>();
         }
 
         public string Nome { get; set; }
@@ -15,5 +16,7 @@ namespace Domain.Entities
         public int? MaximoDeAlunosPorGrupo { get; set; }
         public int IdProfessor { get; set; }
         public virtual Usuario Professor { get; set; }
+
+        // public virtual ICollection<Licao> Licoes { get; set; }
     }
 }

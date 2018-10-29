@@ -22,14 +22,17 @@ namespace Domain.Services
             if (usuario == null)
                 throw new Exception("Login e/ou senha inválidos.");
 
-            var usuarioDTO = new UsuarioDTO
-            {
-                NomeCompleto = usuario.NomeCompleto,
-                Email = usuario.Email
-            };
-
-            return usuarioDTO;
+            return new UsuarioDTO(usuario);;
         }
-        
+
+        public UsuarioDTO Obter(int idUsuario)
+        {
+            var usuario = _usuarioRepository.GetById(idUsuario);
+
+            if (usuario == null)
+                throw new Exception("Usuário não encontrado.");
+
+            return new UsuarioDTO(usuario);
+        }
     }
 }

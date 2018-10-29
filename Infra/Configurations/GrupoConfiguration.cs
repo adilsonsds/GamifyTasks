@@ -16,7 +16,9 @@ namespace Infra.Configurations
                 .HasColumnName("id_grupo");
 
             builder.Property(p => p.Nome)
-                .HasColumnName("nome");
+                .HasColumnName("nome")
+                .HasMaxLength(100)
+                .IsRequired();
 
             // builder.HasMany(p => p.Membros)
             //     .WithOne()

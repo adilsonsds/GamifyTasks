@@ -4,7 +4,7 @@ using Domain.Interfaces.Services;
 using Domain.DTO;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Api.Controllers
+namespace Api.Controllers.v1
 {
     [Authorize("Bearer")]
     [Route("api/v1/grupo")]

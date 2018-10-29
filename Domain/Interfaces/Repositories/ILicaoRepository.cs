@@ -5,7 +5,7 @@ namespace Domain.Interfaces.Repositories
 {
     public interface ILicaoRepository : IRepository<Licao>
     {
-        IEnumerable<Licao> Listar(int idCaseDeNegocio, int? idLicao = null);
+        IEnumerable<Licao> ListarPorCaseDeNegocio(int idCaseDeNegocio);
 
     }
 }

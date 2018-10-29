@@ -6,12 +6,15 @@ namespace Domain.Interfaces.Services
 {
     public interface ILicaoService : IService<Licao>
     {
-        int Adicionar(LicaoDTO licaoDTO);
+        int Adicionar(LicaoDTO licaoDTO, Usuario usuarioLogado);
 
-        void Atualizar(LicaoDTO licaoDTO);
+        void Atualizar(LicaoDTO licaoDTO, Usuario usuarioLogado);
 
-        IEnumerable<LicaoDTO> Listar(int idCaseDeNegocio, int? idLicao = null);
+        IEnumerable<LicaoDTO> Listar(int idCaseDeNegocio, Usuario usuarioLogado);
 
-        LicaoDTO Obter(int idCaseDeNegocio, int idLicao);
+        LicaoDTO Obter(int idCaseDeNegocio, int idLicao, Usuario usuarioLogado);
+
+        LicaoDTO ObterEntrega(int IdEntregaDeLicao, Usuario usuarioLogado);
+        
     }
 }

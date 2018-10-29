@@ -11,4 +11,9 @@ namespace Domain.Interfaces.Services
         void Atualizar(TEntity obj);
 
     }
+
+    public interface IService
+    {
+
+    }
 }
