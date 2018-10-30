@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Interfaces.Services;
 using Domain.DTO;
 using Microsoft.AspNetCore.Authorization;
+using Domain.Request;
 
 namespace Api.Controllers.v1
 {
     [Authorize("Bearer")]
-    [Route("api/v1/cases/{idCase}/grupo")]
+    [Route("api/v1/grupos")]
     public class GrupoController : ControllerBase
     {
         private readonly IGrupoService _grupoService;
@@ -17,27 +18,20 @@ namespace Api.Controllers.v1
             _grupoService = grupoService;
         }
 
-        [HttpGet]
-        public ActionResult Get(int idCase)
+        [HttpGet("{idGrupo}")]
+        public ActionResult Get(int idGrupo)
         {
-            var lista = _grupoService.Listar(idCase);
+            var lista = _grupoService.ObterDetalhes(idGrupo);
             return Ok(lista);
         }
 
-         [HttpGet("{idGrupo}")]
-        public ActionResult Get(int idCase, int idGrupo)
-        {
-            var grupo = _grupoService.ObterPorId(idCase, idGrupo);
-            return Ok(grupo);
-        }
-
         [HttpPost]
-        public ActionResult Post([FromBody]GrupoDTO grupoDTO)
+        public ActionResult Post([FromBody]ManterGrupoRequest request)
         {
             try
             {
-                int idLicao = _grupoService.Adicionar(grupoDTO);
-                return Ok(idLicao);
+                int idGrupo = _grupoService.Adicionar(request);
+                return Ok(idGrupo);
             }
             catch (Exception e)
             {
@@ -46,11 +40,11 @@ namespace Api.Controllers.v1
         }
 
         [HttpPut("{idGrupo}")]
-        public ActionResult Put([FromBody]GrupoDTO grupoDTO)
+        public ActionResult Put([FromBody]ManterGrupoRequest request)
         {
             try
             {
-                _grupoService.Atualizar(grupoDTO);
+                _grupoService.Atualizar(request);
                 return NoContent();
             }
             catch (Exception e)

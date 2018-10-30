@@ -16,13 +16,15 @@ namespace Api.Controllers.v1
         private readonly ICaseDeNegocioService _caseDeNegocioService;
         private readonly UsuarioLogado _usuarioLogado;
         private readonly IConsultaDeAlunosService _consultaDeAlunosService;
+        private readonly IGrupoService _grupoService;
 
         public CaseController(ICaseDeNegocioService caseDeNegocioService, UsuarioLogado usuarioLogado,
-            IConsultaDeAlunosService consultaDeAlunosService)
+            IConsultaDeAlunosService consultaDeAlunosService, IGrupoService grupoService)
         {
             _caseDeNegocioService = caseDeNegocioService;
             _usuarioLogado = usuarioLogado;
             _consultaDeAlunosService = consultaDeAlunosService;
+            _grupoService = grupoService;
         }
 
         [HttpGet]
@@ -89,7 +91,7 @@ namespace Api.Controllers.v1
                 var response = _caseDeNegocioService.Localizar(new LocalizarCaseRequest { Id = id });
                 if (response == null)
                     return NotFound();
-                    
+
                 return Ok(response);
             }
             catch
@@ -118,6 +120,20 @@ namespace Api.Controllers.v1
             try
             {
                 var response = _consultaDeAlunosService.ListarAlunosPorCase(idCase);
+                return Ok(response);
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("{idCase}/grupos")]
+        public ActionResult Grupos(int idCase)
+        {
+            try
+            {
+                var response = _grupoService.ListarPorCaseDeNegocio(idCase);
                 return Ok(response);
             }
             catch

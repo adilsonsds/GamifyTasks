@@ -12,10 +12,5 @@ namespace Infra.Repositories
         {
             
         }
-
-        public IEnumerable<Grupo> Listar(int? idGrupo = null)
-        {
-            return GetAll().ToList();
-        }
     }
 }
