@@ -116,12 +116,7 @@ namespace Domain.Services
             if (possuiAlunoQueJaEstaEmOutroGrupo)
                 throw new Exception("Foi solicitado inclusão de aluno que já possui grupo.");
 
-
-            bool grupoJaTeveEntregaDeLicao = (from e in _entregaDeLicaoRepository.Queryable()
-                                              where e.IdGrupo == grupo.Id && e.Status == EntregaDeLicaoStatusEnum.Entregue
-                                              select e).Any();
-
-            if (grupoJaTeveEntregaDeLicao)
+            if (GrupoJaTeveLicaoEntregue(grupo.Id))
                 throw new Exception("Não é permitido alterações em grupos que já tiveram lições entregues.");
 
             grupo.Nome = request.Nome;
@@ -148,22 +143,105 @@ namespace Domain.Services
         {
             Grupo grupo = _grupoRepository.Queryable().FirstOrDefault(g => g.Id == idGrupo);
             var response = new GrupoDetalhesDTO(grupo);
+            response.Membros = ListarMembros(grupo.Id);
+            return response;
+        }
 
-            response.Membros = (from m in _membroDoGrupoRepository.Queryable()
-                                join a in _alunoRepository.Queryable() on m.IdAluno equals a.Id
-                                join u in _usuarioRepository.Queryable() on a.IdUsuario equals u.Id
-                                where m.IdGrupo == grupo.Id
-                                select new MembroDoGrupoDTO
-                                {
-                                    IdUsuario = u.Id,
-                                    IdAluno = a.Id,
-                                    NomeCompleto = u.NomeCompleto
-                                }).ToList();
+        public IList<MembroDoGrupoDTO> PesquisarNovosMembros(int idCase, string nomeAluno)
+        {
+            var queryUsuarios = _usuarioRepository.Queryable();
+
+            if (!string.IsNullOrWhiteSpace(nomeAluno))
+                queryUsuarios = queryUsuarios.Where(u => u.NomeCompleto.Contains(nomeAluno));
+
+            return (from u in queryUsuarios
+                    join a in _alunoRepository.Queryable() on u.Id equals a.IdUsuario
+                    where a.IdCaseDeNegocio == idCase
+                       && !_membroDoGrupoRepository.Queryable().Any(m => m.IdAluno == a.Id)
+                    orderby u.NomeCompleto
+                    select new MembroDoGrupoDTO
+                    {
+                        IdUsuario = u.Id,
+                        IdAluno = a.Id,
+                        NomeCompleto = u.NomeCompleto
+                    })
+                    .Take(50)
+                    .ToList();
+        }
+
+        public MontarGrupoDTO ObterDadosParaMontagemDeGrupos(Usuario usuarioLogado, int? idCase = null, int? idGrupo = null)
+        {
+            if (!idCase.HasValue && !idGrupo.HasValue)
+                throw new Exception("Solicitação invélida.");
+
+            var response = new MontarGrupoDTO();
+
+            CaseDeNegocio caseDeNegocio = null;
+
+            if (idGrupo.HasValue)
+            {
+                Grupo grupo = ObterPorId(idGrupo.Value);
+
+                if (grupo == null)
+                    throw new Exception("Grupo inexistente.");
+
+                caseDeNegocio = grupo.CaseDeNegocio;
+
+                response.IdGrupo = idGrupo.Value;
+                response.NomeGrupo = grupo.Nome;
+                response.GritoDeGuerra = grupo.GritoDeGuerra;
+                response.PermiteAlterarMembros = GrupoJaTeveLicaoEntregue(idGrupo.Value);
+                response.Membros = ListarMembros(idGrupo.Value);
+            }
+            else
+            {
+                caseDeNegocio = _caseDeNegocioRepository.GetById(idCase.Value);
+
+                if (caseDeNegocio == null)
+                    throw new Exception("Case de negócio não encontrado.");
+
+                var alunoDoCase = _alunoRepository.Obter(usuarioLogado.Id, caseDeNegocio.Id);
+                if (alunoDoCase != null)
+                {
+                    response.Membros.Add(new MembroDoGrupoDTO(usuarioLogado, alunoDoCase));
+                }
+
+                response.PermiteAlterarMembros = true;
+            }
+
+            if (!caseDeNegocio.PermiteMontarGrupos)
+                throw new Exception("Case de negócio não permite grupos.");
+
+            response.IdCase = caseDeNegocio.Id;
+            response.MinimoPermitidoDeAlunos = caseDeNegocio.MinimoDeAlunosPorGrupo;
+            response.MaximoPermitidoDeAlunos = caseDeNegocio.MaximoDeAlunosPorGrupo;
 
             return response;
         }
 
+
         #region Métodos privados
+        private bool GrupoJaTeveLicaoEntregue(int idGrupo)
+        {
+            return (from e in _entregaDeLicaoRepository.Queryable()
+                    where e.IdGrupo == idGrupo && e.Status == EntregaDeLicaoStatusEnum.Entregue
+                    select e).Any();
+        }
+
+        private IList<MembroDoGrupoDTO> ListarMembros(int idGrupo)
+        {
+            return (from m in _membroDoGrupoRepository.Queryable()
+                    join a in _alunoRepository.Queryable() on m.IdAluno equals a.Id
+                    join u in _usuarioRepository.Queryable() on a.IdUsuario equals u.Id
+                    where m.IdGrupo == idGrupo
+                    select new MembroDoGrupoDTO
+                    {
+                        IdUsuario = u.Id,
+                        IdAluno = a.Id,
+                        NomeCompleto = u.NomeCompleto
+                    }).ToList();
+        }
+
         private void AtualizarListaDeMembros(Grupo grupo, IEnumerable<int> idsAlunosMembrosAdicionados)
         {
             foreach (int idAluno in idsAlunosMembrosAdicionados)

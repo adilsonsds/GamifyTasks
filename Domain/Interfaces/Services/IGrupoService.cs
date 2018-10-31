@@ -11,6 +11,7 @@ namespace Domain.Interfaces.Services
         void Atualizar(ManterGrupoRequest request);
         IEnumerable<GrupoDTO> ListarPorCaseDeNegocio(int idCaseDeNegocio);
         GrupoDetalhesDTO ObterDetalhes(int idGrupo);
-
+        IList<MembroDoGrupoDTO> PesquisarNovosMembros(int idCase, string nomeAluno);
+        MontarGrupoDTO ObterDadosParaMontagemDeGrupos(Usuario usuarioLogado, int? idCase = null, int? idGrupo = null);
     }
 }

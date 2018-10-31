@@ -53,6 +53,7 @@ namespace Api.Controllers.v1
             }
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult Post([FromBody]UsuarioModel usuarioModel)
         {
