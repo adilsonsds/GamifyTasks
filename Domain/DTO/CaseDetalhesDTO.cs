@@ -19,6 +19,7 @@ namespace Domain.DTO
             MaximoAlunosGrupo = caseDeNegocio.MaximoDeAlunosPorGrupo;
             IdProfessor = caseDeNegocio.IdProfessor;
             NomeProfessor = caseDeNegocio.Professor.NomeCompleto;
+            ChaveDeBusca = caseDeNegocio.ChaveDeBusca;
         }
 
         public int? Id { get; set; }
@@ -32,6 +33,7 @@ namespace Domain.DTO
         public bool Inscrito { get; set; }
         public bool PermiteSeInscrever { get; set; }
         public bool PermiteEditar { get; set; }
+        public string ChaveDeBusca { get; set; }
 
         public void PreencherEntidade(CaseDeNegocio caseDeNegocio)
         {

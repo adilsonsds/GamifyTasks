@@ -14,14 +14,11 @@ namespace Domain.DTO
             Id = questao.Id;
             Titulo = questao.Titulo;
             NotaMaxima = questao.NotaMaxima;
+            Gabarito = questao.Gabarito;
         }
 
-        public QuestaoDTO(Questao questao, Resposta resposta)
+        public QuestaoDTO(Questao questao, Resposta resposta) : this(questao)
         {
-            Id = questao.Id;
-            Titulo = questao.Titulo;
-            NotaMaxima = questao.NotaMaxima;
-
             if (resposta != null)
             {
                 Resposta = resposta.Conteudo;
@@ -32,6 +29,7 @@ namespace Domain.DTO
         public int? Id { get; set; }
         public string Titulo { get; set; }
         public int NotaMaxima { get; set; }
+        public string Gabarito { get; set; }
         public string Resposta { get; set; }
         public int? PontosGanhos { get; set; }
 
@@ -39,6 +37,7 @@ namespace Domain.DTO
         {
             questao.Titulo = Titulo;
             questao.NotaMaxima = NotaMaxima;
+            questao.Gabarito = Gabarito;
         }
     }
 }

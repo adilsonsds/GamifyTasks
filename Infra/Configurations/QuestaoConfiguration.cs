@@ -30,6 +30,10 @@ namespace Infra.Configurations
             builder.Property(p => p.NotaMaxima)
                 .HasColumnName("nota_maxima")
                 .IsRequired();
+
+            builder.Property(p => p.Gabarito)
+                .HasColumnName("gabarito")
+                .HasMaxLength(5000);
         }
     }
 }

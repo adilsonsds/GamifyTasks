@@ -34,6 +34,8 @@ namespace Domain.Services
 
             caseDTO.PreencherEntidade(caseDeNegocio);
 
+            caseDeNegocio.GerarChaveDeBusca();
+
             Adicionar(caseDeNegocio);
 
             return caseDeNegocio.Id;
@@ -100,7 +102,7 @@ namespace Domain.Services
         public int? Localizar(LocalizarCaseRequest request)
         {
             return _caseDeNegocioRepository.Queryable()
-                .Where(c=>c.Id == request.Id)
+                .Where(c => c.ChaveDeBusca == request.ChaveDeBusca)
                 .Select(c => (int?)c.Id)
                 .FirstOrDefault();
         }

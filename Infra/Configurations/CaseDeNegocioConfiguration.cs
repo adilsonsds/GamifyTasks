@@ -42,6 +42,9 @@ namespace Infra.Configurations
 
             builder.Property(p => p.MaximoDeAlunosPorGrupo)
                 .HasColumnName("maximo_alunos_por_grupo");
+            
+            builder.Property(p => p.ChaveDeBusca)
+                .HasColumnName("chave_busca");
         }
     }
 }

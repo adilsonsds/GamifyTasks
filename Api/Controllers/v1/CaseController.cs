@@ -84,11 +84,11 @@ namespace Api.Controllers.v1
         }
 
         [HttpGet("localizar")]
-        public ActionResult Localizar(int id)
+        public ActionResult Localizar(string key)
         {
             try
             {
-                var response = _caseDeNegocioService.Localizar(new LocalizarCaseRequest { Id = id });
+                var response = _caseDeNegocioService.Localizar(new LocalizarCaseRequest { ChaveDeBusca = key });
                 if (response == null)
                     return NotFound();
 
