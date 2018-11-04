@@ -128,6 +128,9 @@ namespace Api
                     .AllowAnyMethod()
                     .AllowCredentials());
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseMvc();
