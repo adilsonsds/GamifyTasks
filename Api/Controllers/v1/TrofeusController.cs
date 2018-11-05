@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Interfaces.Services;
 using Domain.DTO;
 using Microsoft.AspNetCore.Authorization;
+using Api.Security;
 
 namespace Api.Controllers.v1
 {
@@ -11,10 +12,12 @@ namespace Api.Controllers.v1
     public class TrofeusController : ControllerBase
     {
         private readonly ITrofeuService _trofeuService;
+        private readonly UsuarioLogado _usuarioLogado;
 
-        public TrofeusController(ITrofeuService trofeuService)
+        public TrofeusController(ITrofeuService trofeuService, UsuarioLogado usuarioLogado)
         {
             _trofeuService = trofeuService;
+            _usuarioLogado = usuarioLogado;
         }
 
         [HttpGet]
@@ -24,10 +27,10 @@ namespace Api.Controllers.v1
             return Ok(lista);
         }
 
-        [HttpGet("{idQuestao}")]
-        public ActionResult Get(int idCase, int idQuestao)
+        [HttpGet("{idTrofeu}")]
+        public ActionResult Get(int idCase, int idTrofeu)
         {
-            var lista = _trofeuService.Listar(idCase, idQuestao);
+            var lista = _trofeuService.Obter(idCase, idTrofeu);
             return Ok(lista);
         }
 
@@ -36,7 +39,7 @@ namespace Api.Controllers.v1
         {
             try
             {
-                int id = _trofeuService.Adicionar(trofeuDTO);
+                int id = _trofeuService.Adicionar(trofeuDTO, _usuarioLogado.Obter());
                 return Ok(id);
             }
             catch (Exception e)
@@ -45,12 +48,12 @@ namespace Api.Controllers.v1
             }
         }
 
-        [HttpPut("{idQuestao}")]
+        [HttpPut("{idTrofeu}")]
         public ActionResult Put([FromBody]TrofeuDTO trofeuDTO)
         {
             try
             {
-                _trofeuService.Atualizar(trofeuDTO);
+                _trofeuService.Atualizar(trofeuDTO, _usuarioLogado.Obter());
                 return NoContent();
             }
             catch (Exception e)

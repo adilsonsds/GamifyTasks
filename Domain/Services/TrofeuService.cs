@@ -19,15 +19,18 @@ namespace Domain.Services
             _caseDeNegocioService = caseDeNegocioService;
         }
 
-        public int Adicionar(TrofeuDTO trofeuDTO)
+        public int Adicionar(TrofeuDTO trofeuDTO, Usuario usuarioLogado)
         {
-            if (trofeuDTO == null || trofeuDTO.Id.HasValue)
+            if (trofeuDTO == null || trofeuDTO.Id > 0)
                 throw new Exception("Solicitação inválida.");
 
             CaseDeNegocio caseDeNegocio = _caseDeNegocioService.ObterPorId(trofeuDTO.IdCase);
 
             if (caseDeNegocio == null)
                 throw new Exception("Case de negócio não encontrado.");
+
+            if(!_caseDeNegocioService.UsuarioEstaAssociadoAoCaseDeNegocioComoProfessor(usuarioLogado, caseDeNegocio))
+                throw new Exception("Usuário não possui permissão.");
 
             Trofeu trofeu = new Trofeu();
             trofeu.IdCase = caseDeNegocio.Id;
@@ -40,7 +43,7 @@ namespace Domain.Services
             return trofeu.Id;
         }
 
-        public void Atualizar(TrofeuDTO trofeuDTO)
+        public void Atualizar(TrofeuDTO trofeuDTO, Usuario usuarioLogado)
         {
             if (trofeuDTO == null || !trofeuDTO.Id.HasValue)
                 throw new Exception("Solicitação inválida.");
@@ -50,16 +53,19 @@ namespace Domain.Services
             if (trofeu == null || trofeu.IdCase != trofeuDTO.IdCase)
                 throw new Exception("Troféu não encontrado.");
 
+            if(!_caseDeNegocioService.UsuarioEstaAssociadoAoCaseDeNegocioComoProfessor(usuarioLogado, trofeu.CaseDeNegocio))
+                throw new Exception("Usuário não possui permissão.");
+
             trofeuDTO.PreencherEntidade(trofeu);
 
             Atualizar(trofeu);
         }
 
-        public IEnumerable<TrofeuDTO> Listar(int idCaseDeNegocio, int? idTrofeu = null)
+        public IEnumerable<TrofeuDTO> Listar(int idCaseDeNegocio)
         {
             List<TrofeuDTO> response = new List<TrofeuDTO>();
 
-            var trofeus = _trofeuRepository.Listar(idCaseDeNegocio, idTrofeu);
+            var trofeus = _trofeuRepository.Listar(idCaseDeNegocio);
 
             foreach (var trofeu in trofeus)
             {
@@ -68,6 +74,12 @@ namespace Domain.Services
             }
 
             return response;
+        }
+
+        public TrofeuDTO Obter(int idCaseDeNegocio, int idTrofeu)
+        {
+            Trofeu trofeu = ObterPorId(idTrofeu);
+            return new TrofeuDTO(trofeu);
         }
     }
 }

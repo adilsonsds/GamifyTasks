@@ -13,14 +13,9 @@ namespace Infra.Repositories
 
         }
 
-        public IEnumerable<Trofeu> Listar(int idCaseDeNegocio, int? idTrofeu = null)
+        public IEnumerable<Trofeu> Listar(int idCaseDeNegocio)
         {
-            var query = Queryable().Where(l => l.IdCase == idCaseDeNegocio);
-
-            if (idTrofeu.HasValue && idTrofeu > 0)
-                query = query.Where(t => t.Id == idTrofeu);
-
-            return query.OrderBy(t => t.Nome).ToList();
+            return Queryable().Where(l => l.IdCase == idCaseDeNegocio).OrderBy(t => t.Nome).ToList();
         }
         
     }

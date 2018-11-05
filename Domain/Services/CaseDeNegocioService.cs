@@ -22,7 +22,7 @@ namespace Domain.Services
 
         public int Adicionar(CaseDetalhesDTO caseDTO, Usuario usuarioLogado)
         {
-            if (caseDTO == null || caseDTO.Id.HasValue)
+            if (caseDTO == null || caseDTO.Id > 0)
                 throw new Exception("Solicitação inválida.");
 
             if (!ExisteUsuarioLogado(usuarioLogado))

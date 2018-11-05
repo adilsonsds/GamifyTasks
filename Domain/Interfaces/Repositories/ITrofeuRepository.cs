@@ -5,6 +5,6 @@ namespace Domain.Interfaces.Repositories
 {
     public interface ITrofeuRepository : IRepository<Trofeu>
     {
-        IEnumerable<Trofeu> Listar(int idCaseDeNegocio, int? idTrofeu = null);
+        IEnumerable<Trofeu> Listar(int idCaseDeNegocio);
     }
 }

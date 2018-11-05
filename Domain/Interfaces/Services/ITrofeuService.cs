@@ -6,11 +6,13 @@ namespace Domain.Interfaces.Services
 {
     public interface ITrofeuService : IService<Trofeu>
     {
-        int Adicionar(TrofeuDTO trofeuDTO);
+        int Adicionar(TrofeuDTO trofeuDTO, Usuario usuarioLogado);
 
-        void Atualizar(TrofeuDTO trofeuDTO);
+        void Atualizar(TrofeuDTO trofeuDTO, Usuario usuarioLogado);
 
-        IEnumerable<TrofeuDTO> Listar(int idCaseDeNegocio, int? idTrofeu = null);
+        IEnumerable<TrofeuDTO> Listar(int idCaseDeNegocio);
+
+        TrofeuDTO Obter(int idCaseDeNegocio, int idTrofeu);
 
     }
 }
