@@ -12,12 +12,15 @@ namespace Domain.Services
     {
         private readonly ICaseDeNegocioRepository _caseDeNegocioRepository;
         private readonly IAlunoDoCaseRepository _alunoDoCaseRepository;
+        private readonly IConsultaDeAlunosService _consultaDeAlunosService;
 
-        public CaseDeNegocioService(ICaseDeNegocioRepository caseDeNegocioRepository, IAlunoDoCaseRepository alunoDoCaseRepository)
+        public CaseDeNegocioService(ICaseDeNegocioRepository caseDeNegocioRepository, IAlunoDoCaseRepository alunoDoCaseRepository,
+            IConsultaDeAlunosService consultaDeAlunosService)
             : base(caseDeNegocioRepository)
         {
             _caseDeNegocioRepository = caseDeNegocioRepository;
             _alunoDoCaseRepository = alunoDoCaseRepository;
+            _consultaDeAlunosService = consultaDeAlunosService;
         }
 
         public int Adicionar(CaseDetalhesDTO caseDTO, Usuario usuarioLogado)
@@ -142,13 +145,27 @@ namespace Domain.Services
             response.PermiteEditar = false;
             response.Inscrito = false;
             response.PermiteSeInscrever = false;
+            response.PermiteCriarNovoGrupo = false;
+            response.PermiteCriarLicoes = false;
+            response.PermiteCriarTrofeus = false;
 
             if (ExisteUsuarioLogado(usuario) && ExisteCaseDeNegocio(caseDeNegocio))
             {
                 if (UsuarioEstaAssociadoAoCaseDeNegocioComoProfessor(usuario, caseDeNegocio))
+                {
                     response.PermiteEditar = true;
+                    response.PermiteCriarLicoes = true;
+                    response.PermiteCriarTrofeus = true;
+                }
                 else if (UsuarioEstaInscritoNoCaseDeNegocio(usuario, caseDeNegocio))
+                {
                     response.Inscrito = true;
+                    if (caseDeNegocio.PermiteMontarGrupos)
+                    {
+                        bool jaPossuiGrupo = _consultaDeAlunosService.UsuarioFazParteDeAlgumGrupoDoCaseDeNegocio(usuario.Id, caseDeNegocio.Id);
+                        response.PermiteCriarNovoGrupo = !jaPossuiGrupo;
+                    }
+                }
                 else
                     response.PermiteSeInscrever = true;
             }

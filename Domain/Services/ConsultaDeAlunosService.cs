@@ -53,6 +53,15 @@ namespace Domain.Services
                     select (int?)m.IdGrupo).FirstOrDefault();
         }
 
+        public bool UsuarioFazParteDeAlgumGrupoDoCaseDeNegocio(int idUsuario, int idCase)
+        {
+            return (from a in _alunoDoCaseRepository.Queryable()
+                    join m in _membroDoGrupoRepository.Queryable() on a.Id equals m.IdAluno
+                    where a.IdUsuario == idUsuario
+                       && a.IdCaseDeNegocio == idCase
+                    select m.IdGrupo).Any();
+        }
+
         public IList<AlunoDoCaseDTO> ListarAlunosPorCase(int idCaseDeNegocio)
         {
             var queryAlunos = _alunoDoCaseRepository.Queryable().Where(a => a.IdCaseDeNegocio == idCaseDeNegocio);

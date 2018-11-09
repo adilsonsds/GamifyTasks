@@ -34,6 +34,10 @@ namespace Domain.DTO
         public bool PermiteSeInscrever { get; set; }
         public bool PermiteEditar { get; set; }
         public string ChaveDeBusca { get; set; }
+        public bool PermiteCriarNovoGrupo { get; set; }
+        public bool PermiteCriarLicoes { get; set; }
+        public bool PermiteCriarTrofeus { get; set; }
+        
 
         public void PreencherEntidade(CaseDeNegocio caseDeNegocio)
         {

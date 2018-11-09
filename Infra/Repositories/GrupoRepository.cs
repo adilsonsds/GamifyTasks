@@ -10,7 +10,15 @@ namespace Infra.Repositories
         public GrupoRepository(GamifyTasksContext context)
             : base(context)
         {
-            
+
+        }
+
+        public IList<KeyValuePair<int, string>> ListarKeyValueDeGrupos(int idCaseDeNegocio)
+        {
+            return (from g in Queryable()
+                    where g.IdCase == idCaseDeNegocio
+                    select new KeyValuePair<int, string>(g.Id, g.Nome))
+                    .ToList();
         }
     }
 }

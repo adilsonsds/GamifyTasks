@@ -14,6 +14,8 @@ namespace Domain.Interfaces.Services
 
         int? ObterIdGrupoOndeUsuarioEstejaParticipando(int idUsuario, int idCase);
 
+        bool UsuarioFazParteDeAlgumGrupoDoCaseDeNegocio(int idUsuario, int idCase);
+
         IList<AlunoDoCaseDTO> ListarAlunosPorCase(int idCaseDeNegocio);
 
     }

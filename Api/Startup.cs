@@ -57,6 +57,7 @@ namespace Api
             services.AddTransient<IUsuarioRepository, UsuarioRepository>();
 
             services.AddTransient(typeof(IService<>), typeof(BaseService<>));
+            services.AddTransient<IAvaliacaoDeRespostasService, AvaliacaoDeRespostasService>();
             services.AddTransient<ICaseDeNegocioService, CaseDeNegocioService>();
             services.AddTransient<IConsultaDeAlunosService, ConsultaDeAlunosService>();
             services.AddTransient<IConsultaEntregaDeLicaoService, ConsultaEntregaDeLicaoService>();
@@ -123,7 +124,7 @@ namespace Api
 
             app.UseCors(builder =>
                 builder
-                    .WithOrigins("http://localhost:8080")
+                    .WithOrigins("https://funtask.netlify.com")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials());
