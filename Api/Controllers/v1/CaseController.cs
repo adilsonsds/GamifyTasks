@@ -32,7 +32,7 @@ namespace Api.Controllers.v1
         {
             try
             {
-                var lista = _caseDeNegocioService.ListarCasesDeNegocioAssociadosAoUsuario(_usuarioLogado.Obter());
+                var lista = _caseDeNegocioService.ListarCasesDeNegocioAssociadosAoUsuario(_usuarioLogado.Obter().Id);
                 return Ok(lista);
             }
             catch

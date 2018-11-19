@@ -7,7 +7,7 @@ namespace Domain.Services
     public class BaseService<TEntity> : IService<TEntity> where TEntity : class
     {
 
-        private readonly IRepository<TEntity> _repository;
+        protected readonly IRepository<TEntity> _repository;
 
         public BaseService(IRepository<TEntity> repository)
         {

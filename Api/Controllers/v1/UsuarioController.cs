@@ -1,8 +1,8 @@
 using Api.Models.Usuario;
 using Api.Security;
 using Domain.Entities;
-using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
+using Domain.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,16 +12,20 @@ namespace Api.Controllers.v1
     [Route("api/v1/usuarios")]
     public class UsuarioController : ControllerBase
     {
-        private readonly IUsuarioRepository UsuarioRepository;
         private readonly IUsuarioService _usuarioService;
         private readonly UsuarioLogado _usuarioLogado;
+        private readonly IEntregaDeTrofeuService _entregaDeTrofeuService;
+        private readonly IConsultaDeAlunosService _consultaDeAlunosService;
+        private readonly ICaseDeNegocioService _caseDeNegocioService;
 
-        public UsuarioController(IUsuarioRepository usuarioRepository, IUsuarioService usuarioService,
-            UsuarioLogado usuarioLogado)
+        public UsuarioController(IUsuarioService usuarioService, UsuarioLogado usuarioLogado, IEntregaDeTrofeuService entregaDeTrofeuService,
+            IConsultaDeAlunosService consultaDeAlunosService, ICaseDeNegocioService caseDeNegocioService)
         {
-            this.UsuarioRepository = usuarioRepository;
             _usuarioService = usuarioService;
             _usuarioLogado = usuarioLogado;
+            _entregaDeTrofeuService = entregaDeTrofeuService;
+            _consultaDeAlunosService = consultaDeAlunosService;
+            _caseDeNegocioService = caseDeNegocioService;
         }
 
         [HttpGet("{idUsuario}")]
@@ -62,7 +66,7 @@ namespace Api.Controllers.v1
 
             try
             {
-                UsuarioRepository.Add(usuario);
+                _usuarioService.Adicionar(usuario);
             }
             catch
             {
@@ -75,7 +79,7 @@ namespace Api.Controllers.v1
         [HttpPut("{id}")]
         public ActionResult<Usuario> Put([FromBody]UsuarioModel usuarioModel)
         {
-            var usuario = UsuarioRepository.GetById(usuarioModel.Id);
+            var usuario = _usuarioService.ObterPorId(usuarioModel.Id);
 
             if (usuario == null)
                 return NotFound();
@@ -84,7 +88,7 @@ namespace Api.Controllers.v1
 
             try
             {
-                UsuarioRepository.Update(usuario);
+                _usuarioService.Atualizar(usuario);
             }
             catch
             {
@@ -92,6 +96,62 @@ namespace Api.Controllers.v1
             }
 
             return NoContent();
+        }
+
+        [HttpGet("{id}/trofeus")]
+        public IActionResult Trofeus(int id)
+        {
+            try
+            {
+                var response = _entregaDeTrofeuService.Listar(new FiltroTrofeusRequest { IdUsuario = id });
+                return Ok(response);
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("cases")]
+        public IActionResult Cases()
+        {
+            try
+            {
+                var lista = _caseDeNegocioService.ListarCasesDeNegocioAssociadosAoUsuario(_usuarioLogado.Obter().Id);
+                return Ok(lista);
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("{id}/cases")]
+        public IActionResult Cases(int id)
+        {
+            try
+            {
+                var lista = _caseDeNegocioService.ListarCasesDeNegocioAssociadosAoUsuario(id);
+                return Ok(lista);
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpGet("{id}/grupos")]
+        public IActionResult Grupos(int id)
+        {
+            try
+            {
+                var response = _consultaDeAlunosService.ListarGruposOndeUsuarioEhMembro(idUsuario: id);
+                return Ok(response);
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
     }
 }

@@ -10,9 +10,10 @@ namespace Domain.DTO
         public AvaliarRespostasDTO()
         {
             Questoes = new List<AvaliarQuestaoDTO>();
+            Trofeus = new List<TrofeuParaAtribuirDTO>();
         }
 
-        public AvaliarRespostasDTO(Licao licao)
+        public AvaliarRespostasDTO(Licao licao, IEnumerable<Trofeu> trofeus)
         {
             IdLicao = licao.Id;
             Titulo = licao.Titulo;
@@ -20,6 +21,7 @@ namespace Domain.DTO
             DataLiberacao = licao.DataLiberacao;
             DataEncerramento = licao.DataEncerramento;
             Questoes = licao.Questoes.Select(q => new AvaliarQuestaoDTO(q)).ToList();
+            Trofeus = trofeus.Select(t => new TrofeuParaAtribuirDTO(t)).ToList();
         }
 
         public int IdLicao { get; set; }
@@ -28,7 +30,7 @@ namespace Domain.DTO
         public DateTime? DataLiberacao { get; set; }
         public DateTime? DataEncerramento { get; set; }
         public IList<AvaliarQuestaoDTO> Questoes { get; set; }
-        public IList<KeyValuePair<int, string>> Grupos { get; set; }
+        public List<TrofeuParaAtribuirDTO> Trofeus { get; set; }
     }
 
     public class AvaliarQuestaoDTO
@@ -43,5 +45,19 @@ namespace Domain.DTO
         public int IdQuestao { get; set; }
         public string Titulo { get; set; }
         public int NotaMaxima { get; set; }
+    }
+
+    public class TrofeuParaAtribuirDTO
+    {
+        public TrofeuParaAtribuirDTO(Trofeu trofeu)
+        {
+            IdTrofeu = trofeu.Id;
+            Nome = trofeu.Nome;
+            Pontos = trofeu.Pontos;
+        }
+
+        public int IdTrofeu { get; set; }
+        public string Nome { get; set; }
+        public int Pontos { get; set; }
     }
 }

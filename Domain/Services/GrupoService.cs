@@ -18,10 +18,15 @@ namespace Domain.Services
         private readonly IAlunoDoCaseRepository _alunoRepository;
         private readonly IMembroDoGrupoRepository _membroDoGrupoRepository;
         private readonly IEntregaDeLicaoRepository _entregaDeLicaoRepository;
+        private readonly IResponsavelPelaLicaoRepository _responsavelPelaLicaoRepository;
+        private readonly IEntregaDeTrofeuRepository _entregaDeTrofeuRepository;
+        private readonly ITrofeuRepository _trofeuRepository;
+        private readonly IRespostaRepository _respostaRepository;
 
         public GrupoService(IGrupoRepository grupoRepository, ICaseDeNegocioRepository caseDeNegocioRepository,
             IUsuarioRepository usuarioRepository, IAlunoDoCaseRepository alunoRepository, IMembroDoGrupoRepository membroDoGrupoRepository,
-            IEntregaDeLicaoRepository entregaDeLicaoRepository)
+            IEntregaDeLicaoRepository entregaDeLicaoRepository, IResponsavelPelaLicaoRepository responsavelPelaLicaoRepository,
+            IEntregaDeTrofeuRepository entregaDeTrofeuRepository, ITrofeuRepository trofeuRepository, IRespostaRepository respostaRepository)
             : base(grupoRepository)
         {
             _grupoRepository = grupoRepository;
@@ -30,6 +35,10 @@ namespace Domain.Services
             _alunoRepository = alunoRepository;
             _membroDoGrupoRepository = membroDoGrupoRepository;
             _entregaDeLicaoRepository = entregaDeLicaoRepository;
+            _responsavelPelaLicaoRepository = responsavelPelaLicaoRepository;
+            _entregaDeTrofeuRepository = entregaDeTrofeuRepository;
+            _trofeuRepository = trofeuRepository;
+            _respostaRepository = respostaRepository;
         }
 
         public int Adicionar(ManterGrupoRequest request)
@@ -129,14 +138,24 @@ namespace Domain.Services
 
         public IEnumerable<GrupoDTO> ListarPorCaseDeNegocio(int idCaseDeNegocio)
         {
-            return _grupoRepository.Queryable()
-                .Where(g => g.IdCase == idCaseDeNegocio)
+            var queryGrupos = _grupoRepository.Queryable().Where(g => g.IdCase == idCaseDeNegocio);
+
+            var grupos = queryGrupos
                 .Select(g => new GrupoDTO
                 {
                     Id = g.Id,
                     Nome = g.Nome
                 })
                 .ToList();
+
+            if (grupos.Any())
+            {
+                AplicarPontosGanhosComRespostas(grupos, queryGrupos);
+                AplicarPontosGanhosComTrofeus(grupos, queryGrupos);
+                grupos = OrdenarPelaQuantidadeDePontosDoMaiorParaMenor(grupos);
+            }
+
+            return grupos;
         }
 
         public GrupoDetalhesDTO ObterDetalhes(int idGrupo)
@@ -263,6 +282,56 @@ namespace Domain.Services
             foreach (MembroDoGrupo membroRemovido in membrosRemovidos)
             {
                 grupo.Membros.Remove(membroRemovido);
+            }
+        }
+
+        private List<GrupoDTO> OrdenarPelaQuantidadeDePontosDoMaiorParaMenor(List<GrupoDTO> grupos)
+        {
+            return grupos
+                .OrderByDescending(a => a.Pontos)
+                .ThenBy(a => a.Nome)
+                .ToList();
+        }
+
+        private void AplicarPontosGanhosComRespostas(List<GrupoDTO> grupos, IQueryable<Grupo> queryGrupos)
+        {
+            var pontosDasRespostas = (from g in queryGrupos
+                                      join e in _entregaDeLicaoRepository.Queryable() on g.Id equals e.IdGrupo
+                                      join re in _respostaRepository.Queryable() on e.Id equals re.IdEntregaDeLicao
+                                      where re.PontosGanhos != null
+                                      group re by g.Id into g
+                                      select new
+                                      {
+                                          IdGrupo = g.Key,
+                                          Pontos = g.Sum(p => p.PontosGanhos.Value)
+                                      }).ToList();
+
+            foreach (var grupo in grupos)
+            {
+                var totalDasRespostas = pontosDasRespostas.FirstOrDefault(p => p.IdGrupo == grupo.Id);
+                if (totalDasRespostas != null)
+                    grupo.Pontos += totalDasRespostas.Pontos;
+            }
+        }
+
+        private void AplicarPontosGanhosComTrofeus(List<GrupoDTO> grupos, IQueryable<Grupo> queryGrupos)
+        {
+            var pontosDosTrofeus = (from g in queryGrupos
+                                    join el in _entregaDeLicaoRepository.Queryable() on g.Id equals el.IdGrupo
+                                    join et in _entregaDeTrofeuRepository.Queryable() on el.Id equals et.IdEntregaDeLicao
+                                    join t in _trofeuRepository.Queryable() on et.IdTrofeu equals t.Id
+                                    group t by g.Id into g
+                                    select new
+                                    {
+                                        IdGrupo = g.Key,
+                                        Pontos = g.Sum(trofeu => trofeu.Pontos)
+                                    }).ToList();
+
+            foreach (var grupo in grupos)
+            {
+                var totalDosTrofeus = pontosDosTrofeus.FirstOrDefault(p => p.IdGrupo == grupo.Id);
+                if (totalDosTrofeus != null)
+                    grupo.Pontos += totalDosTrofeus.Pontos;
             }
         }
         #endregion

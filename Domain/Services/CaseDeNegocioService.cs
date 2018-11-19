@@ -65,14 +65,11 @@ namespace Domain.Services
             Atualizar(caseDeNegocio);
         }
 
-        public IEnumerable<CaseDTO> ListarCasesDeNegocioAssociadosAoUsuario(Usuario usuario)
+        public IEnumerable<CaseDTO> ListarCasesDeNegocioAssociadosAoUsuario(int idUsuario)
         {
-            if (!ExisteUsuarioLogado(usuario))
-                throw new Exception("Este método requer um usuário autenticado.");
-
             List<CaseDTO> response = new List<CaseDTO>();
-            AdicionarCasesDeNegociosAssociadosComoProfessor(response, usuario);
-            AdicionarCasesDeNegociosAssociadosComoAluno(response, usuario);
+            AdicionarCasesDeNegociosAssociadosComoProfessor(response, idUsuario);
+            AdicionarCasesDeNegociosAssociadosComoAluno(response, idUsuario);
 
             return response.OrderBy(c => c.Nome).ToList();
         }
@@ -112,12 +109,12 @@ namespace Domain.Services
 
         #region Métodos privados
 
-        private void AdicionarCasesDeNegociosAssociadosComoProfessor(List<CaseDTO> lista, Usuario usuario)
+        private void AdicionarCasesDeNegociosAssociadosComoProfessor(List<CaseDTO> lista, int idUsuario)
         {
             lista.AddRange(
                 _caseDeNegocioRepository
                     .Queryable()
-                    .Where(c => c.Professor.Id == usuario.Id)
+                    .Where(c => c.Professor.Id == idUsuario)
                     .Select(c => new CaseDTO
                     {
                         Id = c.Id,
@@ -126,12 +123,12 @@ namespace Domain.Services
             );
         }
 
-        private void AdicionarCasesDeNegociosAssociadosComoAluno(List<CaseDTO> lista, Usuario usuario)
+        private void AdicionarCasesDeNegociosAssociadosComoAluno(List<CaseDTO> lista, int idUsuario)
         {
             lista.AddRange(
                 (from c in _caseDeNegocioRepository.Queryable()
                  join a in _alunoDoCaseRepository.Queryable() on c.Id equals a.IdCaseDeNegocio
-                 where a.IdUsuario == usuario.Id
+                 where a.IdUsuario == idUsuario
                  select new CaseDTO
                  {
                      Id = c.Id,

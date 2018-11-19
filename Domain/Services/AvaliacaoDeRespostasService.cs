@@ -16,14 +16,16 @@ namespace Domain.Services
         private readonly ILicaoRepository _licaoRepository;
         private readonly IEntregaDeLicaoRepository _entregaDeLicaoRepository;
         private readonly IRespostaRepository _respostaRepository;
+        private readonly ITrofeuRepository _trofeuRepository;
 
         public AvaliacaoDeRespostasService(ICaseDeNegocioService caseDeNegocioService, ILicaoRepository licaoRepository,
-            IEntregaDeLicaoRepository entregaDeLicaoRepository, IRespostaRepository respostaRepository)
+            IEntregaDeLicaoRepository entregaDeLicaoRepository, IRespostaRepository respostaRepository, ITrofeuRepository trofeuRepository)
         {
             _caseDeNegocioService = caseDeNegocioService;
             _licaoRepository = licaoRepository;
             _entregaDeLicaoRepository = entregaDeLicaoRepository;
             _respostaRepository = respostaRepository;
+            _trofeuRepository = trofeuRepository;
         }
 
         public AvaliarRespostasDTO ObterDadosDePreparacaoParaAvaliarRespostas(int idLicao, Usuario usuarioLogado)
@@ -38,7 +40,9 @@ namespace Domain.Services
             if (!ehProfessor)
                 throw new Exception("Apenas professores têm permissão para avaliar as lições entregues.");
 
-            return new AvaliarRespostasDTO(licao); ;
+            var trofeus = _trofeuRepository.Listar(licao.IdCase);
+
+            return new AvaliarRespostasDTO(licao, trofeus);
         }
 
         public IList<QuestaoParaAvaliarDTO> ListarQuestoesParaAvaliar(FiltrarQuestoesRequest filtro)
@@ -54,11 +58,13 @@ namespace Domain.Services
                             orderby e.DataHoraEntrega ascending
                             select new QuestaoParaAvaliarDTO
                             {
+                                IdEntregaDeLicao = e.Id,
                                 IdResposta = r.Id,
                                 Resposta = r.Conteudo,
                                 IdQuestao = r.IdQuestao,
                                 DataHoraEntrega = e.DataHoraEntrega,
-                                IdGrupo = e.IdGrupo
+                                IdGrupo = e.IdGrupo,
+                                PontosRecebidos = r.PontosGanhos
                             }).ToList();
 
             return questoes;

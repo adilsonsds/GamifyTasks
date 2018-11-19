@@ -13,12 +13,14 @@ namespace Api.Controllers.v1
     public class GrupoController : ControllerBase
     {
         private readonly IGrupoService _grupoService;
+        private readonly IEntregaDeTrofeuService _entregaDeTrofeuService;
         private readonly UsuarioLogado _usuarioLogado;
 
-        public GrupoController(IGrupoService grupoService, UsuarioLogado usuarioLogado)
+        public GrupoController(IGrupoService grupoService, UsuarioLogado usuarioLogado, IEntregaDeTrofeuService entregaDeTrofeuService)
         {
             _grupoService = grupoService;
             _usuarioLogado = usuarioLogado;
+            _entregaDeTrofeuService = entregaDeTrofeuService;
         }
 
         [HttpGet("{idGrupo}")]
@@ -73,16 +75,29 @@ namespace Api.Controllers.v1
         [HttpGet("preparar")]
         public ActionResult PrepararMontagens(int? idcase = null, int? grupo = null)
         {
+            try
+            {
+                var response = _grupoService.ObterDadosParaMontagemDeGrupos(_usuarioLogado.Obter(), idcase, grupo);
+                return Ok(response);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("{id}/trofeus")]
+        public IActionResult Trofeus(int id)
+        {
             // try
             // {
-                var response = _grupoService.ObterDadosParaMontagemDeGrupos(_usuarioLogado.Obter(), idcase, grupo);
+                var response = _entregaDeTrofeuService.Listar(new FiltroTrofeusRequest { IdGrupo = id });
                 return Ok(response);
             // }
             // catch
             // {
-            //     return BadRequest();
+            //     return NotFound();
             // }
         }
-
     }
 }

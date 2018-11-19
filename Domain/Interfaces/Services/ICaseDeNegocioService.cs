@@ -10,7 +10,7 @@ namespace Domain.Interfaces.Services
 
         void Atualizar(CaseDetalhesDTO caseDTO, Usuario usuario);
 
-        IEnumerable<CaseDTO> ListarCasesDeNegocioAssociadosAoUsuario(Usuario usuario);
+        IEnumerable<CaseDTO> ListarCasesDeNegocioAssociadosAoUsuario(int idUsuario);
 
         CaseDetalhesDTO ObterDetalhesPorId(int idCaseDeNegocio, Usuario usuario);
 

@@ -13,6 +13,8 @@ namespace Domain.DTO
         public int IdQuestao { get; set; }
         public int IdResposta { get; set; }
         public string Resposta { get; set; }
+        public int IdEntregaDeLicao { get; set; }
+        public int? PontosRecebidos { get; set; }
         public DateTime? DataHoraEntrega { get; set; }
         public bool EntregueForaDoPrazo { get; set; }
         public int? IdGrupo { get; set; }

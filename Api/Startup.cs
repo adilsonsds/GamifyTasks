@@ -62,6 +62,7 @@ namespace Api
             services.AddTransient<IConsultaDeAlunosService, ConsultaDeAlunosService>();
             services.AddTransient<IConsultaEntregaDeLicaoService, ConsultaEntregaDeLicaoService>();
             services.AddTransient<IEntregaDeLicaoService, EntregaDeLicaoService>();
+            services.AddTransient<IEntregaDeTrofeuService, EntregaDeTrofeuService>();
             services.AddTransient<IGeracaoDeEntregaDeLicaoService, GeracaoDeEntregaDeLicaoService>();
             services.AddTransient<IGrupoService, GrupoService>();
             services.AddTransient<ILicaoService, LicaoService>();

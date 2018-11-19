@@ -15,15 +15,22 @@ namespace Domain.Services
         private readonly ICaseDeNegocioService _caseDeNegocioService;
         private readonly IConsultaEntregaDeLicaoService _consultaEntregaDeLicaoService;
         private readonly IEntregaDeLicaoRepository _entregaDeLicaoRepository;
+        private readonly IEntregaDeTrofeuRepository _entregaDeTrofeuRepository;
+        private readonly ITrofeuRepository _trofeuRepository;
+        private readonly IRespostaRepository _respostaRepository;
 
         public LicaoService(ILicaoRepository licaoRepository, ICaseDeNegocioService caseDeNegocioService,
-            IConsultaEntregaDeLicaoService consultaEntregaDeLicaoService, IEntregaDeLicaoRepository entregaDeLicaoRepository)
+            IConsultaEntregaDeLicaoService consultaEntregaDeLicaoService, IEntregaDeLicaoRepository entregaDeLicaoRepository,
+            IEntregaDeTrofeuRepository entregaDeTrofeuRepository, ITrofeuRepository trofeuRepository, IRespostaRepository respostaRepository)
                 : base(licaoRepository)
         {
             _licaoRepository = licaoRepository;
             _caseDeNegocioService = caseDeNegocioService;
             _consultaEntregaDeLicaoService = consultaEntregaDeLicaoService;
             _entregaDeLicaoRepository = entregaDeLicaoRepository;
+            _entregaDeTrofeuRepository = entregaDeTrofeuRepository;
+            _trofeuRepository = trofeuRepository;
+            _respostaRepository = respostaRepository;
         }
 
         public int Adicionar(LicaoDTO licaoDTO, Usuario usuarioLogado)
@@ -138,10 +145,32 @@ namespace Domain.Services
             var licoesIniciadas = _consultaEntregaDeLicaoService.ListarEntregasIniciadasPeloUsuarioNoCaseDeNegocio(entrega.Licao.IdCase, usuarioLogado.Id);
             PreencherDadosDePermissaoEEntrega(response, permiteEditar, ehAlunoInscrito, licoesIniciadas);
 
+            if (entrega.Status == EntregaDeLicaoStatusEnum.Entregue)
+                AplicarTrofeusRecebidos(response);
+
             return response;
         }
 
         #region Métodos privados
+        private void AplicarTrofeusRecebidos(LicaoDTO response)
+        {
+            var entregaDeTrofeus = (from et in _entregaDeTrofeuRepository.Queryable()
+                                    join t in _trofeuRepository.Queryable() on et.IdTrofeu equals t.Id
+                                    join r in _respostaRepository.Queryable() on et.IdResposta equals r.Id
+                                    select new KeyValuePair<int, EntregaDeTrofeuDTO>(r.IdQuestao, new EntregaDeTrofeuDTO
+                                    {
+                                        IdEntrega = et.Id,
+                                        IdTrofeu = t.Id,
+                                        NomeTrofeu = t.Nome,
+                                        PontosMovimentados = t.Pontos
+                                    })).ToList();
+
+            foreach (var questao in response.Questoes)
+            {
+                questao.Trofeus = entregaDeTrofeus.Where(t => t.Key == questao.Id).Select(t => t.Value).ToList();
+            }
+        }
+
         private void AtualizarListaDeQuestoes(Licao licao, IEnumerable<QuestaoDTO> questoesParaSalvar)
         {
             foreach (var questaoDTO in questoesParaSalvar)
@@ -224,7 +253,7 @@ namespace Domain.Services
                 licaoDTO.PermiteEntregar = false;
             }
         }
-        
+
         #endregion
     }
 }

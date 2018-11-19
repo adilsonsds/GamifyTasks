@@ -18,5 +18,9 @@ namespace Domain.Interfaces.Services
 
         IList<AlunoDoCaseDTO> ListarAlunosPorCase(int idCaseDeNegocio);
 
+        IEnumerable<CaseDoAlunoDTO> ListarCasesOndeUsuarioPossuiInscricao(int idUsuario);
+
+        IEnumerable<GrupoDoAlunoDTO> ListarGruposOndeUsuarioEhMembro(int idUsuario);
+        
     }
 }

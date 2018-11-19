@@ -48,7 +48,7 @@ namespace Domain.DTO
 
             foreach (var questao in entregaDeLicao.Licao.Questoes)
             {
-                var resposta = entregaDeLicao.Respostas.FirstOrDefault(r => r.IdQuestao == questao.Id);
+                Resposta resposta = entregaDeLicao.Respostas.FirstOrDefault(r => r.IdQuestao == questao.Id);
                 Questoes.Add(new QuestaoDTO(questao, resposta));
             }
         }

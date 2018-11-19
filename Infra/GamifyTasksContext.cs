@@ -20,7 +20,7 @@ namespace Infra
             modelBuilder.ApplyConfiguration(new AlunoDoCaseConfiguration());
             modelBuilder.ApplyConfiguration(new CaseDeNegocioConfiguration());
             modelBuilder.ApplyConfiguration(new EntregaDeLicaoConfiguration());
-            // modelBuilder.ApplyConfiguration(new EntregaDeTrofeuConfiguration());
+            modelBuilder.ApplyConfiguration(new EntregaDeTrofeuConfiguration());
             modelBuilder.ApplyConfiguration(new GrupoConfiguration());
             modelBuilder.ApplyConfiguration(new LicaoConfiguration());
             modelBuilder.ApplyConfiguration(new MembroDoGrupoConfiguration());
